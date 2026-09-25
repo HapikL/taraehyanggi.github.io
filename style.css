@@ -210,6 +210,7 @@ button {
         font-size: 11px;
         padding: 4px;
     }
+}
 .modal {
     position: fixed;
     inset: 0;
@@ -269,5 +270,4 @@ button {
     border-radius: 8px;
     background: white;
     cursor: pointer;
-}
 }
