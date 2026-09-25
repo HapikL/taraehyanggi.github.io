@@ -3,178 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Calendar</title>
 
-    <title>My Homepage</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #ffffff;
-            color: #222;
-        }
-
-        /* 상단 메뉴 */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px 40px;
-            background: rgba(255, 255, 255, 0.9);
-            border-bottom: 1px solid #eee;
-        }
-
-        nav {
-            max-width: 1100px;
-            margin: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .menu a {
-            margin-left: 25px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        /* 첫 화면 */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 100px 20px 40px;
-            background: #f5f5f5;
-        }
-
-        .hero h1 {
-            font-size: 64px;
-            margin-bottom: 20px;
-        }
-
-        .hero p {
-            font-size: 20px;
-            color: #666;
-            line-height: 1.7;
-        }
-
-        .button {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 14px 28px;
-            background: #222;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-        }
-
-        /* 소개 */
-        .section {
-            max-width: 900px;
-            margin: auto;
-            padding: 120px 20px;
-            text-align: center;
-        }
-
-        .section h2 {
-            font-size: 36px;
-            margin-bottom: 30px;
-        }
-
-        .section p {
-            font-size: 18px;
-            line-height: 1.8;
-            color: #666;
-        }
-
-        /* 연락처 */
-        .contact {
-            background: #f5f5f5;
-        }
-
-        footer {
-            padding: 30px;
-            text-align: center;
-            color: #888;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- 메뉴 -->
-    <header>
-        <nav>
-            <div class="logo">타래향기 예약사이트</div>
+    <main class="calendar-app">
 
-            <div class="menu">
-                <a href="#home">예약현황</a>
-                <a href="#about">관리</a>
+        <header class="calendar-header">
+            <div>
+                <h1>Calendar</h1>
+                <p>공유 캘린더</p>
             </div>
-        </nav>
-    </header>
+
+            <div class="calendar-controls">
+                <button id="prevMonth">‹</button>
+
+                <h2 id="calendarTitle"></h2>
+
+                <button id="nextMonth">›</button>
+
+                <button id="todayButton" class="today-button">
+                    오늘
+                </button>
+            </div>
+        </header>
 
 
-    <!-- 첫 화면 -->
-    <section class="hero" id="home">
-        <div>
-            <h1>백석공방 타래향기에 오신 여러분을 환영슨 👋</h1>
+        <section class="calendar">
 
-            <p>
-                이것은 제가 직접 만든<br>
-                똥꼬쇼 입니다.
-            </p>
+            <div class="weekdays">
+                <div class="sunday">일</div>
+                <div>월</div>
+                <div>화</div>
+                <div>수</div>
+                <div>목</div>
+                <div>금</div>
+                <div class="saturday">토</div>
+            </div>
 
-            <a href="#about" class="button">
-                더 알아보기
-            </a>
-        </div>
-    </section>
+            <div id="calendarGrid" class="calendar-grid"></div>
 
+        </section>
 
-    <!-- 소개 -->
-    <section class="section" id="about">
-        <h2>ABOUT ME</h2>
-
-        <p>
-            이곳에 나를 소개하는 내용을 넣을 수 있습니다.<br>
-            좋아하는 것, 관심 있는 것, 하고 있는 일 등<br>
-            원하는 내용을 자유롭게 작성할 수 있습니다.
-        </p>
-    </section>
+    </main>
 
 
-    <!-- 연락처 -->
-    <section class="section contact" id="contact">
-        <h2>CONTACT</h2>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js?v=3"></script>
 
-        <p>
-            이메일이나 SNS 등<br>
-            원하는 연락처를 넣을 수 있습니다.
-        </p>
-    </section>
-
-
-    <footer>
-        © 2026 타래향기
-    </footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
 </body>
 </html>
