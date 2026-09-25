@@ -5,8 +5,6 @@ const supabaseClient = supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
-
-
 const calendarGrid = document.getElementById('calendarGrid');
 const calendarTitle = document.getElementById('calendarTitle');
 
@@ -14,18 +12,122 @@ const prevMonthButton = document.getElementById('prevMonth');
 const nextMonthButton = document.getElementById('nextMonth');
 const todayButton = document.getElementById('todayButton');
 
+const loginButton = document.getElementById('loginButton');
+const logoutButton = document.getElementById('logoutButton');
+
+const eventModal = document.getElementById('eventModal');
+const eventTitle = document.getElementById('eventTitle');
+const eventDescription = document.getElementById('eventDescription');
+const eventCategory = document.getElementById('eventCategory');
+const selectedDateText = document.getElementById('selectedDateText');
+
+const cancelEventButton = document.getElementById('cancelEventButton');
+const saveEventButton = document.getElementById('saveEventButton');
 
 let currentDate = new Date();
-
 let events = [];
+let selectedDate = null;
+let currentUser = null;
+let isAdmin = false;
 
 
-/* -----------------------------
-   Supabase 일정 불러오기
------------------------------- */
+/* =========================
+   로그인 상태 확인
+========================= */
+
+async function checkLogin() {
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    currentUser = user;
+
+    if (!user) {
+        isAdmin = false;
+
+        loginButton.style.display = 'inline-block';
+        logoutButton.style.display = 'none';
+
+        return;
+    }
+
+    const { data: profile, error } = await supabaseClient
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (error) {
+        console.error('프로필 확인 실패:', error);
+        isAdmin = false;
+    } else {
+        isAdmin = profile?.role === 'admin';
+    }
+
+    loginButton.style.display = 'none';
+    logoutButton.style.display = 'inline-block';
+}
+
+
+/* =========================
+   로그인
+========================= */
+
+loginButton.addEventListener('click', async () => {
+    const email = prompt('이메일을 입력하세요.');
+
+    if (!email) {
+        return;
+    }
+
+    const password = prompt('비밀번호를 입력하세요.');
+
+    if (!password) {
+        return;
+    }
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        alert('로그인에 실패했습니다.');
+        console.error(error);
+        return;
+    }
+
+    await checkLogin();
+
+    if (isAdmin) {
+        alert('관리자로 로그인되었습니다.');
+    } else {
+        alert('로그인되었습니다.');
+    }
+});
+
+
+/* =========================
+   로그아웃
+========================= */
+
+logoutButton.addEventListener('click', async () => {
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+    isAdmin = false;
+
+    await checkLogin();
+
+    alert('로그아웃되었습니다.');
+});
+
+
+/* =========================
+   일정 불러오기
+========================= */
 
 async function loadEvents() {
-
     const { data, error } = await supabaseClient
         .from('events')
         .select('*');
@@ -35,18 +137,17 @@ async function loadEvents() {
         return;
     }
 
-    events = data;
+    events = data || [];
 
     renderCalendar();
 }
 
 
-/* -----------------------------
-   날짜 YYYY-MM-DD 형태 변환
------------------------------- */
+/* =========================
+   YYYY-MM-DD 변환
+========================= */
 
 function formatDate(year, month, day) {
-
     const monthString = String(month + 1).padStart(2, '0');
     const dayString = String(day).padStart(2, '0');
 
@@ -54,54 +155,38 @@ function formatDate(year, month, day) {
 }
 
 
-/* -----------------------------
+/* =========================
    달력 그리기
------------------------------- */
+========================= */
 
 function renderCalendar() {
-
     calendarGrid.innerHTML = '';
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
+    calendarTitle.textContent = `${year}년 ${month + 1}월`;
 
-    calendarTitle.textContent =
-        `${year}년 ${month + 1}월`;
-
-
-    const firstDay =
-        new Date(year, month, 1).getDay();
-
-    const lastDate =
-        new Date(year, month + 1, 0).getDate();
-
-    const previousMonthLastDate =
-        new Date(year, month, 0).getDate();
-
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+    const previousMonthLastDate = new Date(year, month, 0).getDate();
 
     const today = new Date();
 
     const totalCells = 42;
 
-
     for (let i = 0; i < totalCells; i++) {
-
-        const dayElement =
-            document.createElement('div');
+        const dayElement = document.createElement('div');
 
         dayElement.classList.add('day');
-
 
         let displayDay;
         let cellYear = year;
         let cellMonth = month;
 
-
         /* 이전 달 */
 
         if (i < firstDay) {
-
             displayDay =
                 previousMonthLastDate
                 - firstDay
@@ -118,23 +203,20 @@ function renderCalendar() {
             dayElement.classList.add('other-month');
         }
 
-
         /* 이번 달 */
 
         else if (i < firstDay + lastDate) {
-
-            displayDay =
-                i - firstDay + 1;
-
+            displayDay = i - firstDay + 1;
         }
-
 
         /* 다음 달 */
 
         else {
-
             displayDay =
-                i - firstDay - lastDate + 1;
+                i
+                - firstDay
+                - lastDate
+                + 1;
 
             cellMonth = month + 1;
 
@@ -146,23 +228,44 @@ function renderCalendar() {
             dayElement.classList.add('other-month');
         }
 
-
-        const dateString =
-            formatDate(
-                cellYear,
-                cellMonth,
-                displayDay
-            );
-
+        const dateString = formatDate(
+            cellYear,
+            cellMonth,
+            displayDay
+        );
 
         dayElement.dataset.date = dateString;
+
+
+        /* =========================
+           관리자 날짜 클릭
+        ========================= */
+
+        dayElement.addEventListener('click', () => {
+            if (!isAdmin) {
+                return;
+            }
+
+            selectedDate = dateString;
+
+            selectedDateText.textContent =
+                `선택한 날짜: ${selectedDate}`;
+
+            eventTitle.value = '';
+            eventDescription.value = '';
+            eventCategory.value = '개인';
+
+            eventModal.classList.remove('hidden');
+        });
 
 
         /* 오늘 표시 */
 
         if (
-            cellYear === today.getFullYear() &&
-            cellMonth === today.getMonth() &&
+            cellYear === today.getFullYear()
+            &&
+            cellMonth === today.getMonth()
+            &&
             displayDay === today.getDate()
         ) {
             dayElement.classList.add('today');
@@ -171,34 +274,26 @@ function renderCalendar() {
 
         /* 날짜 숫자 */
 
-        const numberElement =
-            document.createElement('div');
+        const numberElement = document.createElement('div');
 
         numberElement.classList.add('day-number');
-
-        numberElement.textContent =
-            displayDay;
+        numberElement.textContent = displayDay;
 
         dayElement.appendChild(numberElement);
 
 
-        /* 해당 날짜 일정 */
+        /* 일정 표시 */
 
-        const dayEvents =
-            events.filter(event =>
-                event.start_date === dateString
-            );
-
+        const dayEvents = events.filter(
+            event => event.start_date === dateString
+        );
 
         dayEvents.forEach(event => {
-
-            const eventElement =
-                document.createElement('div');
+            const eventElement = document.createElement('div');
 
             eventElement.classList.add('event');
 
-            eventElement.textContent =
-                event.title;
+            eventElement.textContent = event.title;
 
             eventElement.title =
                 event.description || event.title;
@@ -206,63 +301,102 @@ function renderCalendar() {
             dayElement.appendChild(eventElement);
         });
 
-
         calendarGrid.appendChild(dayElement);
     }
 }
 
 
-/* -----------------------------
+/* =========================
    이전 달
------------------------------- */
+========================= */
 
-prevMonthButton.addEventListener(
-    'click',
-    () => {
+prevMonthButton.addEventListener('click', () => {
+    currentDate.setMonth(
+        currentDate.getMonth() - 1
+    );
 
-        currentDate.setMonth(
-            currentDate.getMonth() - 1
-        );
-
-        renderCalendar();
-    }
-);
+    renderCalendar();
+});
 
 
-/* -----------------------------
+/* =========================
    다음 달
------------------------------- */
+========================= */
 
-nextMonthButton.addEventListener(
-    'click',
-    () => {
+nextMonthButton.addEventListener('click', () => {
+    currentDate.setMonth(
+        currentDate.getMonth() + 1
+    );
 
-        currentDate.setMonth(
-            currentDate.getMonth() + 1
-        );
-
-        renderCalendar();
-    }
-);
+    renderCalendar();
+});
 
 
-/* -----------------------------
+/* =========================
    오늘
------------------------------- */
+========================= */
 
-todayButton.addEventListener(
-    'click',
-    () => {
+todayButton.addEventListener('click', () => {
+    currentDate = new Date();
 
-        currentDate = new Date();
+    renderCalendar();
+});
 
-        renderCalendar();
+
+/* =========================
+   일정 추가 취소
+========================= */
+
+cancelEventButton.addEventListener('click', () => {
+    eventModal.classList.add('hidden');
+});
+
+
+/* =========================
+   일정 저장
+========================= */
+
+saveEventButton.addEventListener('click', async () => {
+    if (!isAdmin) {
+        alert('관리자만 일정을 추가할 수 있습니다.');
+        return;
     }
-);
+
+    const title = eventTitle.value.trim();
+
+    if (!title) {
+        alert('일정 제목을 입력하세요.');
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('events')
+        .insert({
+            title: title,
+            description: eventDescription.value.trim(),
+            start_date: selectedDate,
+            category: eventCategory.value
+        });
+
+    if (error) {
+        console.error('일정 저장 실패:', error);
+        alert('일정 저장에 실패했습니다.');
+        return;
+    }
+
+    eventModal.classList.add('hidden');
+
+    await loadEvents();
+});
 
 
-/* -----------------------------
+/* =========================
    시작
------------------------------- */
+========================= */
 
-loadEvents();
+async function init() {
+    await checkLogin();
+    await loadEvents();
+}
+
+init();
