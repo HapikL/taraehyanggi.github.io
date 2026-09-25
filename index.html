@@ -4,66 +4,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>나의 홈페이지</title>
+    <title>My Homepage</title>
 
     <style>
         * {
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background: #ffffff;
             color: #222;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 80px 20px;
-            text-align: center;
+        /* 상단 메뉴 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #eee;
         }
 
-        h1 {
-            font-size: 48px;
+        nav {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .menu a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        /* 첫 화면 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 100px 20px 40px;
+            background: #f5f5f5;
+        }
+
+        .hero h1 {
+            font-size: 64px;
             margin-bottom: 20px;
         }
 
-        p {
+        .hero p {
             font-size: 20px;
             color: #666;
+            line-height: 1.7;
         }
 
         .button {
             display: inline-block;
             margin-top: 30px;
-            padding: 15px 30px;
+            padding: 14px 28px;
             background: #222;
             color: white;
             text-decoration: none;
             border-radius: 8px;
         }
 
-        .button:hover {
-            background: #444;
+        /* 소개 */
+        .section {
+            max-width: 900px;
+            margin: auto;
+            padding: 120px 20px;
+            text-align: center;
+        }
+
+        .section h2 {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .section p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #666;
+        }
+
+        /* 연락처 */
+        .contact {
+            background: #f5f5f5;
+        }
+
+        footer {
+            padding: 30px;
+            text-align: center;
+            color: #888;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
-        <h1>안녕하세요 👋</h1>
+    <!-- 메뉴 -->
+    <header>
+        <nav>
+            <div class="logo">MY WEBSITE</div>
+
+            <div class="menu">
+                <a href="#home">HOME</a>
+                <a href="#about">ABOUT</a>
+                <a href="#contact">CONTACT</a>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- 첫 화면 -->
+    <section class="hero" id="home">
+        <div>
+            <h1>안녕하세요 👋</h1>
+
+            <p>
+                이것은 제가 직접 만든<br>
+                나만의 홈페이지입니다.
+            </p>
+
+            <a href="#about" class="button">
+                더 알아보기
+            </a>
+        </div>
+    </section>
+
+
+    <!-- 소개 -->
+    <section class="section" id="about">
+        <h2>ABOUT ME</h2>
 
         <p>
-            이것은 제가 처음 만든 홈페이지입니다.
+            이곳에 나를 소개하는 내용을 넣을 수 있습니다.<br>
+            좋아하는 것, 관심 있는 것, 하고 있는 일 등<br>
+            원하는 내용을 자유롭게 작성할 수 있습니다.
         </p>
+    </section>
 
-        <a href="#" class="button">
-            버튼을 눌러보세요
-        </a>
-    </div>
+
+    <!-- 연락처 -->
+    <section class="section contact" id="contact">
+        <h2>CONTACT</h2>
+
+        <p>
+            이메일이나 SNS 등<br>
+            원하는 연락처를 넣을 수 있습니다.
+        </p>
+    </section>
+
+
+    <footer>
+        © 2026 My Website
+    </footer>
 
 </body>
 </html>
