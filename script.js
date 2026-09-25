@@ -6,4 +6,17 @@ const supabaseClient = supabase.createClient(
     SUPABASE_KEY
 );
 
-console.log('Supabase 연결 준비 완료');
+async function loadEvents() {
+    const { data, error } = await supabaseClient
+        .from('events')
+        .select('*');
+
+    if (error) {
+        console.error('일정 불러오기 실패:', error);
+        return;
+    }
+
+    console.log('일정 데이터:', data);
+}
+
+loadEvents();
