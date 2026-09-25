@@ -13,23 +13,21 @@
     <main class="calendar-app">
 
         <header class="calendar-header">
-            <div>
-                <h1>Calendar</h1>
-                <p>공유 캘린더</p>
-            </div>
+    <div>
+        <h1>Calendar</h1>
+        <p>공유 캘린더</p>
+    </div>
 
-            <div class="calendar-controls">
-                <button id="prevMonth">‹</button>
+    <div class="calendar-controls">
+        <button id="prevMonth">‹</button>
+        <h2 id="calendarTitle"></h2>
+        <button id="nextMonth">›</button>
+        <button id="todayButton" class="today-button">오늘</button>
 
-                <h2 id="calendarTitle"></h2>
-
-                <button id="nextMonth">›</button>
-
-                <button id="todayButton" class="today-button">
-                    오늘
-                </button>
-            </div>
-        </header>
+        <button id="loginButton">로그인</button>
+        <button id="logoutButton" style="display:none;">로그아웃</button>
+    </div>
+</header>
 
 
         <section class="calendar">
@@ -49,10 +47,34 @@
         </section>
 
     </main>
+    
+<div id="eventModal" class="modal hidden">
+    <div class="modal-content">
+        <h3>일정 추가</h3>
 
+        <input id="eventTitle" type="text" placeholder="일정 제목">
+
+        <textarea id="eventDescription" placeholder="상세 내용"></textarea>
+
+        <select id="eventCategory">
+            <option value="개인">개인</option>
+            <option value="약속">약속</option>
+            <option value="취미">취미</option>
+            <option value="중요">중요</option>
+            <option value="기타">기타</option>
+        </select>
+
+        <p id="selectedDateText"></p>
+
+        <div class="modal-buttons">
+            <button id="cancelEventButton">취소</button>
+            <button id="saveEventButton">저장</button>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
 
 </body>
 </html>
