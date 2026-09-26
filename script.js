@@ -258,7 +258,7 @@ dayElement.addEventListener('click', () => {
 
     eventTitle.value = '';
     eventDescription.value = '';
-    eventCategory.value = '개인';
+    eventCategory.value = '머미';
 
     deleteEventButton.style.display = 'none';
 
@@ -322,7 +322,7 @@ dayElement.addEventListener('click', () => {
 
         eventTitle.value = event.title || '';
         eventDescription.value = event.description || '';
-        eventCategory.value = event.category || '개인';
+        eventCategory.value = event.category || '머미';
 
         deleteEventButton.style.display = 'inline-block';
 
