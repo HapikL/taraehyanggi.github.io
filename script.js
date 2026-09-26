@@ -424,10 +424,12 @@ saveEventButton.addEventListener('click', async () => {
 
 deleteEventButton.addEventListener('click', async () => {
     if (!isAdmin) {
+        alert('관리자 권한이 없습니다.');
         return;
     }
 
     if (!editingEventId) {
+        alert('삭제할 일정 ID를 찾지 못했습니다.');
         return;
     }
 
@@ -437,14 +439,24 @@ deleteEventButton.addEventListener('click', async () => {
         return;
     }
 
-    const { error } = await supabaseClient
+    console.log('삭제할 일정 ID:', editingEventId);
+
+    const { data, error } = await supabaseClient
         .from('events')
         .delete()
-        .eq('id', editingEventId);
+        .eq('id', editingEventId)
+        .select();
 
     if (error) {
         console.error('일정 삭제 실패:', error);
         alert('일정 삭제에 실패했습니다.');
+        return;
+    }
+
+    console.log('삭제 결과:', data);
+
+    if (!data || data.length === 0) {
+        alert('삭제 권한 또는 RLS 정책을 확인해야 합니다.');
         return;
     }
 
@@ -454,7 +466,6 @@ deleteEventButton.addEventListener('click', async () => {
 
     await loadEvents();
 });
-
 
 /* =========================
    시작
