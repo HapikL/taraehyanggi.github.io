@@ -527,24 +527,6 @@ dayHeaderElement.classList.add('day-header');
 const numberElement = document.createElement('div');
 numberElement.classList.add('day-number');
 numberElement.textContent = displayDay;
-        
-const holidayName = koreanHolidays[dateString];
-
-if (holidayName) {
-    dayElement.classList.add('holiday-cell');
-
-    const holidayElement =
-        document.createElement('div');
-
-    holidayElement.classList.add('holiday-name');
-
-    holidayElement.textContent =
-        holidayName;
-
-    numberElement.classList.add('holiday-number');
-
-    dayElement.appendChild(holidayElement);
-}
 
 /* 해당 날짜의 A/B 일정 존재 여부 */
 
