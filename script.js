@@ -368,11 +368,11 @@ function renderCalendar() {
 
     const firstDay = new Date(year, month, 1).getDay();
     const lastDate = new Date(year, month + 1, 0).getDate();
-    const previousMonthLastDate = new Date(year, month, 0).getDate();
 
     const today = new Date();
 
-    const totalCells = 42;
+const totalCells =
+    Math.ceil((firstDay + lastDate) / 7) * 7;
 
     for (let i = 0; i < totalCells; i++) {
         const dayElement = document.createElement('div');
@@ -385,22 +385,14 @@ function renderCalendar() {
 
         /* 이전 달 */
 
-        if (i < firstDay) {
-            displayDay =
-                previousMonthLastDate
-                - firstDay
-                + i
-                + 1;
+if (i < firstDay) {
 
-            cellMonth = month - 1;
+    dayElement.classList.add('empty-day');
 
-            if (cellMonth < 0) {
-                cellMonth = 11;
-                cellYear--;
-            }
+    calendarGrid.appendChild(dayElement);
 
-            dayElement.classList.add('other-month');
-        }
+    continue;
+}
 
         /* 이번 달 */
 
@@ -410,22 +402,14 @@ function renderCalendar() {
 
         /* 다음 달 */
 
-        else {
-            displayDay =
-                i
-                - firstDay
-                - lastDate
-                + 1;
+else {
 
-            cellMonth = month + 1;
+    dayElement.classList.add('empty-day');
 
-            if (cellMonth > 11) {
-                cellMonth = 0;
-                cellYear++;
-            }
+    calendarGrid.appendChild(dayElement);
 
-            dayElement.classList.add('other-month');
-        }
+    continue;
+}
 
         const dateString = formatDate(
             cellYear,
