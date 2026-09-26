@@ -45,6 +45,7 @@ const detailHost = document.getElementById('detailHost');
 const detailDescription = document.getElementById('detailDescription');
 const deleteEventButton = document.getElementById('deleteEventButton');
 const eventModalTitle = document.getElementById('eventModalTitle');
+const filterButtons = document.querySelectorAll('.filter-button');
 
 let currentDate = new Date();
 let events = [];
@@ -52,6 +53,7 @@ let selectedDate = null;
 let currentUser = null;
 let isAdmin = false;
 let editingEventId = null;
+let selectedCategoryFilter = '전체';
 
 /* =========================
    로그인 상태 확인
@@ -455,10 +457,17 @@ dayElement.appendChild(dayHeaderElement);
 
         /* 일정 표시 */
 
-   const dayEvents = events
-    .filter(
-        event => event.start_date === dateString
-    )
+const dayEvents = events
+    .filter(event => {
+        const sameDate =
+            event.start_date === dateString;
+
+        const categoryMatches =
+            selectedCategoryFilter === '전체'
+            || event.category === selectedCategoryFilter;
+
+        return sameDate && categoryMatches;
+    })
     .sort((a, b) => {
         const timeA = a.event_time || '99:99';
         const timeB = b.event_time || '99:99';
@@ -594,6 +603,19 @@ todayButton.addEventListener('click', () => {
     renderCalendar();
 });
 
+filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        selectedCategoryFilter = button.dataset.category;
+
+        filterButtons.forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        button.classList.add('active');
+
+        renderCalendar();
+    });
+});
 
 /* =========================
    일정 추가 취소
