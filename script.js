@@ -406,9 +406,16 @@ eventHost.value = '';
 
         /* 일정 표시 */
 
-        const dayEvents = events.filter(
-            event => event.start_date === dateString
-        );
+   const dayEvents = events
+    .filter(
+        event => event.start_date === dateString
+    )
+    .sort((a, b) => {
+        const timeA = a.event_time || '99:99';
+        const timeB = b.event_time || '99:99';
+
+        return timeA.localeCompare(timeB);
+    });
 
         dayEvents.forEach(event => {
     const eventElement = document.createElement('div');
