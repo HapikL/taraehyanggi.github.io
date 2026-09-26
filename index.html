@@ -50,26 +50,36 @@
     
 <div id="eventModal" class="modal hidden">
     <div class="modal-content">
-        <h3>일정 추가</h3>
+<h3 id="eventModalTitle">일정 추가</h3>
 
         <input id="eventTitle" type="text" placeholder="일정 제목">
 
         <textarea id="eventDescription" placeholder="상세 내용"></textarea>
 
         <select id="eventCategory">
-            <option value="개인">개인</option>
-            <option value="약속">약속</option>
-            <option value="취미">취미</option>
-            <option value="중요">중요</option>
+            <option value="머미">개인</option>
+            <option value="보겜">약속</option>
+            <option value="협추">취미</option>
             <option value="기타">기타</option>
         </select>
 
         <p id="selectedDateText"></p>
 
-        <div class="modal-buttons">
-            <button id="cancelEventButton">취소</button>
-            <button id="saveEventButton">저장</button>
-        </div>
+  <div class="modal-buttons">
+
+    <button id="deleteEventButton" style="display:none;">
+        삭제
+    </button>
+
+    <button id="cancelEventButton">
+        취소
+    </button>
+
+    <button id="saveEventButton">
+        저장
+    </button>
+
+</div>
     </div>
 </div>
 
