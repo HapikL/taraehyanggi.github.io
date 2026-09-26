@@ -658,3 +658,23 @@ body {
         grid-template-columns: 1fr;
     }
 }
+/* =========================
+   드래그 이동
+========================= */
+
+.event.dragging {
+    opacity: 0.45;
+}
+
+.day.drag-over {
+    background: #eef6ff;
+    outline: 2px dashed #6b9fe6;
+    outline-offset: -3px;
+}
+.event[draggable="true"] {
+    cursor: grab;
+}
+
+.event[draggable="true"]:active {
+    cursor: grabbing;
+}
