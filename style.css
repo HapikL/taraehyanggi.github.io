@@ -678,3 +678,79 @@ body {
 .event[draggable="true"]:active {
     cursor: grabbing;
 }
+/* =========================
+   날짜 A / B 상태 표시
+========================= */
+
+.day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    margin-bottom: 7px;
+}
+
+
+/* 기존 day-number의 아래 여백 제거 */
+.day-header .day-number {
+    margin-bottom: 0;
+}
+
+
+.ab-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+/* 기본 = 불 꺼짐 */
+.ab-indicator {
+    width: 22px;
+    height: 22px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e5e5e5;
+    color: #aaaaaa;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    opacity: 0.55;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        opacity 0.15s ease,
+        transform 0.15s ease;
+}
+
+
+/* A 켜짐 */
+.ab-indicator.ab-a.active {
+    background: #e5484d;
+    color: white;
+
+    opacity: 1;
+
+    box-shadow:
+        0 2px 5px rgba(229, 72, 77, 0.28);
+}
+
+
+/* B 켜짐 */
+.ab-indicator.ab-b.active {
+    background: #3b82f6;
+    color: white;
+
+    opacity: 1;
+
+    box-shadow:
+        0 2px 5px rgba(59, 130, 246, 0.28);
+}
