@@ -342,7 +342,18 @@ button {
     background: #eef8ef;
     border-color: #9ad0a8;
 }
+.today-summary-card.no-events {
+    background: #fff0f0;
+    border-color: #ef9a9a;
+}
 
+.today-summary-card.no-events .today-summary-icon {
+    background: #dc4c4c;
+}
+
+.today-summary-card.no-events .count-badge {
+    background: #dc4c4c;
+}
 .today-summary-icon {
     width: 34px;
     height: 34px;
