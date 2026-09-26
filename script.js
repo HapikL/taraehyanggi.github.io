@@ -489,14 +489,22 @@ eventElement.dataset.eventId = event.id;
     eventElement.classList.remove('dragging');
 });
             
-    eventElement.innerHTML = `
+eventElement.innerHTML = `
+    <div class="event-top-row">
         <div class="event-time">${event.event_time || '--:--'}</div>
-        <div class="event-title">${event.title || ''}</div>
-        <div class="event-meta">
-            <span>${event.people_count ?? '-'}명</span>
-            <span>벙주 ${event.host_name || '-'}</span>
-        </div>
-    `;
+
+        <span class="event-ab-badge ${event.ab_type === 'A' ? 'event-ab-a' : 'event-ab-b'}">
+            ${event.ab_type || ''}
+        </span>
+    </div>
+
+    <div class="event-title">${event.title || ''}</div>
+
+    <div class="event-meta">
+        <span>${event.people_count ?? '-'}명</span>
+        <span>벙주 ${event.host_name || '-'}</span>
+    </div>
+`;
 
     eventElement.addEventListener('click', (e) => {
         e.stopPropagation();
