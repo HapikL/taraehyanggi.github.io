@@ -299,7 +299,11 @@ dayElement.addEventListener('click', () => {
     const eventElement = document.createElement('div');
 
     eventElement.classList.add('event');
-
+            
+eventElement.classList.add(
+    `category-${event.category}`
+);
+            
     eventElement.textContent = event.title;
 
     eventElement.title =
