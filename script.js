@@ -14,6 +14,8 @@ const todayButton = document.getElementById('todayButton');
 
 const loginButton = document.getElementById('loginButton');
 const logoutButton = document.getElementById('logoutButton');
+const quickAddEventButton =
+    document.getElementById('quickAddEventButton');
 const loginModal = document.getElementById('loginModal');
 
 const loginEmail = document.getElementById('loginEmail');
@@ -28,6 +30,8 @@ const loginErrorMessage = document.getElementById('loginErrorMessage');
 
 const eventModal = document.getElementById('eventModal');
 const eventTitle = document.getElementById('eventTitle');
+const eventDate =
+    document.getElementById('eventDate');
 const eventDescription = document.getElementById('eventDescription');
 const eventCategory = document.getElementById('eventCategory');
 const eventABType = document.getElementById('eventABType');
@@ -82,7 +86,8 @@ async function checkLogin() {
 
         loginButton.style.display = 'inline-block';
         logoutButton.style.display = 'none';
-
+        quickAddEventButton.style.display = 'none';
+        
         return;
     }
 
@@ -101,6 +106,8 @@ async function checkLogin() {
 
     loginButton.style.display = 'none';
     logoutButton.style.display = 'inline-block';
+    quickAddEventButton.style.display =
+    isAdmin ? 'inline-block' : 'none';
 }
 
 
@@ -450,6 +457,8 @@ dayElement.addEventListener('click', () => {
 
     editingEventId = null;
     selectedDate = dateString;
+    
+    eventDate.value = dateString;
 
     eventModalTitle.textContent = '일정 추가';
 
@@ -625,7 +634,9 @@ editingEventId = event.id;
 
             editingEventId = event.id;
             selectedDate = event.start_date;
-
+            
+            eventDate.value = event.start_date;
+            
             eventModalTitle.textContent = '일정 수정';
             selectedDateText.textContent = `선택한 날짜: ${selectedDate}`;
 
@@ -688,6 +699,52 @@ todayButton.addEventListener('click', () => {
     renderCalendar();
 });
 
+quickAddEventButton.addEventListener('click', () => {
+
+    if (!isAdmin) {
+        return;
+    }
+
+    editingEventId = null;
+
+    const today = new Date();
+
+    selectedDate = formatDate(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+    );
+
+    eventModalTitle.textContent = '일정 추가';
+
+    eventDate.value = selectedDate;
+
+    selectedDateText.textContent =
+        `선택한 날짜: ${selectedDate}`;
+
+    eventTitle.value = '';
+    eventDescription.value = '';
+    eventCategory.value = '머미';
+
+    eventTime.value = '';
+    eventPeople.value = '';
+    eventHost.value = '';
+
+    eventABType.value = '';
+
+    deleteEventButton.style.display = 'none';
+
+    eventModal.classList.remove('hidden');
+});
+
+eventDate.addEventListener('change', () => {
+
+    selectedDate = eventDate.value;
+
+    selectedDateText.textContent =
+        `선택한 날짜: ${selectedDate}`;
+});
+
 filterButtons.forEach(button => {
     button.addEventListener('click', () => {
         selectedCategoryFilter = button.dataset.category;
@@ -724,6 +781,12 @@ saveEventButton.addEventListener('click', async () => {
         return;
     }
 console.log('현재 editingEventId:', editingEventId);
+    selectedDate = eventDate.value;
+
+if (!selectedDate) {
+    alert('날짜를 선택하세요.');
+    return;
+}
     const title = eventTitle.value.trim();
 
     if (!title) {
