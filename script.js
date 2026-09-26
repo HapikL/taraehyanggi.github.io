@@ -204,6 +204,13 @@ function renderTodaySummary() {
 
     todayDateLabel.textContent = formatKoreanDate(todayString);
     todayCountBadge.textContent = `${todayEvents.length}건`;
+    const todaySummaryCard = document.querySelector('.today-summary-card');
+
+if (todayEvents.length === 0) {
+    todaySummaryCard.classList.add('no-events');
+} else {
+    todaySummaryCard.classList.remove('no-events');
+}
 
     if (todayEvents.length === 0) {
         todaySummaryList.textContent = '오늘 일정이 없습니다.';
