@@ -14,6 +14,17 @@ const todayButton = document.getElementById('todayButton');
 
 const loginButton = document.getElementById('loginButton');
 const logoutButton = document.getElementById('logoutButton');
+const loginModal = document.getElementById('loginModal');
+
+const loginEmail = document.getElementById('loginEmail');
+const loginPassword = document.getElementById('loginPassword');
+
+const submitLoginButton = document.getElementById('submitLoginButton');
+const closeLoginButton = document.getElementById('closeLoginButton');
+
+const togglePasswordButton = document.getElementById('togglePasswordButton');
+
+const loginErrorMessage = document.getElementById('loginErrorMessage');
 
 const eventModal = document.getElementById('eventModal');
 const eventTitle = document.getElementById('eventTitle');
@@ -97,23 +108,113 @@ async function checkLogin() {
    로그인
 ========================= */
 
-loginButton.addEventListener('click', async () => {
-    const email = prompt('이메일을 입력하세요.');
+loginButton.addEventListener('click', () => {
+
+    loginEmail.value = '';
+    loginPassword.value = '';
+
+    loginErrorMessage.textContent = '';
+
+    loginPassword.type = 'password';
+    togglePasswordButton.textContent = '보기';
+
+    loginModal.classList.remove('hidden');
+
+    setTimeout(() => {
+        loginEmail.focus();
+    }, 100);
+});
+
+submitLoginButton.addEventListener('click', async () => {
+
+    const email = loginEmail.value.trim();
+    const password = loginPassword.value;
+
+    loginErrorMessage.textContent = '';
 
     if (!email) {
+        loginErrorMessage.textContent =
+            '이메일을 입력해주세요.';
         return;
     }
-
-    const password = prompt('비밀번호를 입력하세요.');
 
     if (!password) {
+        loginErrorMessage.textContent =
+            '비밀번호를 입력해주세요.';
         return;
     }
 
-    const { error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
+
+    submitLoginButton.disabled = true;
+    submitLoginButton.textContent = '로그인 중...';
+
+
+    const { error } =
+        await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+
+    submitLoginButton.disabled = false;
+    submitLoginButton.textContent = '로그인';
+
+
+    if (error) {
+        loginErrorMessage.textContent =
+            '이메일 또는 비밀번호가 올바르지 않습니다.';
+
+        console.error('로그인 실패:', error);
+
+        return;
+    }
+
+
+    await checkLogin();
+
+
+    loginPassword.value = '';
+
+    loginModal.classList.add('hidden');
+
+
+    if (isAdmin) {
+        alert('관리자로 로그인되었습니다.');
+    } else {
+        alert('로그인되었습니다.');
+    }
+});
+
+closeLoginButton.addEventListener('click', () => {
+
+    loginModal.classList.add('hidden');
+
+    loginPassword.value = '';
+    loginErrorMessage.textContent = '';
+});
+
+togglePasswordButton.addEventListener('click', () => {
+
+    if (loginPassword.type === 'password') {
+
+        loginPassword.type = 'text';
+
+        togglePasswordButton.textContent = '숨기기';
+
+    } else {
+
+        loginPassword.type = 'password';
+
+        togglePasswordButton.textContent = '보기';
+    }
+});
+
+loginPassword.addEventListener('keydown', (e) => {
+
+    if (e.key === 'Enter') {
+        submitLoginButton.click();
+    }
+});
 
     if (error) {
         alert('로그인에 실패했습니다.');
