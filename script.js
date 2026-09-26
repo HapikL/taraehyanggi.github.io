@@ -19,6 +19,7 @@ const eventModal = document.getElementById('eventModal');
 const eventTitle = document.getElementById('eventTitle');
 const eventDescription = document.getElementById('eventDescription');
 const eventCategory = document.getElementById('eventCategory');
+const eventABType = document.getElementById('eventABType');
 const selectedDateText = document.getElementById('selectedDateText');
 
 const cancelEventButton = document.getElementById('cancelEventButton');
@@ -372,9 +373,10 @@ dayElement.addEventListener('click', () => {
     eventDescription.value = '';
     eventCategory.value = '머미';
     eventTime.value = '';
-eventPeople.value = '';
-eventHost.value = '';
-
+    eventPeople.value = '';
+    eventHost.value = '';
+    eventABType.value = '';
+    
     deleteEventButton.style.display = 'none';
 
     eventModal.classList.remove('hidden');
@@ -395,13 +397,60 @@ eventHost.value = '';
 
 
         /* 날짜 숫자 */
+const dayHeaderElement = document.createElement('div');
+dayHeaderElement.classList.add('day-header');
 
-        const numberElement = document.createElement('div');
+const numberElement = document.createElement('div');
+numberElement.classList.add('day-number');
+numberElement.textContent = displayDay;
 
-        numberElement.classList.add('day-number');
-        numberElement.textContent = displayDay;
 
-        dayElement.appendChild(numberElement);
+/* 해당 날짜의 A/B 일정 존재 여부 */
+
+const statusEvents = events.filter(
+    event => event.start_date === dateString
+);
+
+const hasA = statusEvents.some(
+    event => event.ab_type === 'A'
+);
+
+const hasB = statusEvents.some(
+    event => event.ab_type === 'B'
+);
+
+
+/* A/B 표시 영역 */
+
+const abStatusElement = document.createElement('div');
+abStatusElement.classList.add('ab-status');
+
+
+const aIndicator = document.createElement('span');
+aIndicator.classList.add('ab-indicator', 'ab-a');
+aIndicator.textContent = 'A';
+
+if (hasA) {
+    aIndicator.classList.add('active');
+}
+
+
+const bIndicator = document.createElement('span');
+bIndicator.classList.add('ab-indicator', 'ab-b');
+bIndicator.textContent = 'B';
+
+if (hasB) {
+    bIndicator.classList.add('active');
+}
+
+
+abStatusElement.appendChild(aIndicator);
+abStatusElement.appendChild(bIndicator);
+
+dayHeaderElement.appendChild(numberElement);
+dayHeaderElement.appendChild(abStatusElement);
+
+dayElement.appendChild(dayHeaderElement);
 
 
         /* 일정 표시 */
@@ -484,7 +533,8 @@ editingEventId = event.id;
             eventHost.value = event.host_name || '';
             eventDescription.value = event.description || '';
             eventCategory.value = event.category || '머미';
-
+            eventABType.value = event.ab_type || '';
+            
             deleteEventButton.style.display = 'inline-block';
             eventModal.classList.remove('hidden');
         };
@@ -565,7 +615,12 @@ console.log('현재 editingEventId:', editingEventId);
         alert('일정 제목을 입력하세요.');
         return;
     }
-
+    
+if (!eventABType.value) {
+    alert('A 또는 B를 선택하세요.');
+    return;
+}
+    
     const eventData = {
         title: title,
         description: eventDescription.value.trim(),
@@ -575,7 +630,8 @@ console.log('현재 editingEventId:', editingEventId);
         people_count: eventPeople.value
             ? parseInt(eventPeople.value, 10)
             : null,
-        host_name: eventHost.value.trim()
+        host_name: eventHost.value.trim(),
+        ab_type: eventABType.value
     };
 
     let error;
