@@ -829,3 +829,128 @@ body {
     color: white;
     border-color: #2f3542;
 }
+/* =========================
+   로그인 팝업
+========================= */
+
+.login-modal-content {
+    position: relative;
+    width: min(400px, 92%);
+    padding: 30px;
+}
+
+.login-title {
+    margin: 0 0 8px;
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.login-description {
+    margin: 0 0 24px;
+    color: #777;
+    font-size: 14px;
+}
+
+.login-label {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 7px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #555;
+}
+
+.login-modal-content input {
+    width: 100%;
+
+    padding: 12px 13px;
+
+    border: 1px solid #d8d1c7;
+    border-radius: 10px;
+
+    background: white;
+
+    font: inherit;
+
+    outline: none;
+}
+
+.login-modal-content input:focus {
+    border-color: #8b8174;
+    box-shadow: 0 0 0 3px rgba(139, 129, 116, 0.12);
+}
+
+
+/* =========================
+   비밀번호 입력칸
+========================= */
+
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    padding-right: 65px;
+}
+
+.password-toggle {
+    position: absolute;
+
+    top: 50%;
+    right: 8px;
+
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+
+    color: #777;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+/* =========================
+   로그인 버튼
+========================= */
+
+.login-submit-button {
+    width: 100%;
+
+    margin-top: 22px;
+    padding: 12px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #333;
+    color: white;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.login-submit-button:hover {
+    background: #222;
+}
+
+
+/* =========================
+   로그인 오류
+========================= */
+
+.login-error {
+    min-height: 18px;
+
+    margin: 10px 0 0;
+
+    color: #d64545;
+
+    font-size: 13px;
+}
