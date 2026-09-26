@@ -954,3 +954,23 @@ body {
 
     font-size: 13px;
 }
+/* =========================
+   로그인 / 빠른 일정 추가
+========================= */
+
+.auth-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#quickAddEventButton {
+    background: #333;
+    color: white;
+    border-color: #333;
+    font-weight: 700;
+}
+
+#quickAddEventButton:hover {
+    background: #222;
+}
