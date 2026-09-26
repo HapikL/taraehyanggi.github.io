@@ -993,3 +993,25 @@ body {
 
     font: inherit;
 }
+/* =========================
+   주말 배경
+========================= */
+
+/* 일요일 */
+.day.sunday-cell {
+    background: #fff4f4;
+}
+
+/* 토요일 */
+.day.saturday-cell {
+    background: #f3f7ff;
+}
+
+/* 다른 달 날짜는 너무 진해지지 않게 */
+.day.other-month.sunday-cell {
+    background: #fff9f9;
+}
+
+.day.other-month.saturday-cell {
+    background: #f8faff;
+}
