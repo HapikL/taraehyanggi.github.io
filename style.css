@@ -316,3 +316,334 @@ button {
 
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
+/* =========================
+   상단 요약 영역
+========================= */
+
+.dashboard-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.today-summary-card,
+.category-legend-card {
+    background: #fffdf9;
+    border: 1px solid #e5d7c5;
+    border-radius: 18px;
+    padding: 18px;
+}
+
+.today-summary-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: #eef8ef;
+    border-color: #9ad0a8;
+}
+
+.today-summary-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #3b9a5f;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.today-summary-content {
+    flex: 1;
+}
+
+.today-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.today-summary-header strong {
+    font-size: 20px;
+}
+
+#todayDateLabel {
+    color: #5f6b75;
+    font-size: 14px;
+}
+
+.count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #4ea86d;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.today-summary-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    color: #25313a;
+    font-size: 14px;
+}
+
+.today-summary-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-title {
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.legend-items {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.legend-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    border: 1px solid #e2d6ca;
+    background: white;
+}
+
+.legend-pill::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+/* =========================
+   화면 전체 톤 조정
+========================= */
+
+body {
+    background: #f6f1e8;
+}
+
+.calendar {
+    background: #fffdf9;
+    border: 1px solid #decfbd;
+    box-shadow: none;
+}
+
+.calendar-header {
+    padding: 0 6px;
+}
+
+.calendar-header h1 {
+    display: none;
+}
+
+.calendar-header p {
+    display: none;
+}
+
+.calendar-controls {
+    margin-left: auto;
+}
+
+.calendar-controls h2 {
+    min-width: auto;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.weekdays {
+    background: #fffaf3;
+    border-bottom: 1px solid #decfbd;
+}
+
+.weekdays div {
+    font-size: 14px;
+}
+
+.day {
+    background: #fffdf9;
+    border-right: 1px solid #e2d6ca;
+    border-bottom: 1px solid #e2d6ca;
+    padding: 10px;
+}
+
+.other-month {
+    background: #fcf8f1;
+    color: #b1a593;
+}
+
+.day-number {
+    font-weight: 700;
+}
+
+
+/* =========================
+   일정 카드 디자인
+========================= */
+
+.event {
+    padding: 8px 10px;
+    margin-top: 6px;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.35;
+    white-space: normal;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.event-time {
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.event-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    word-break: keep-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+
+/* =========================
+   카테고리 색상
+========================= */
+
+.category-bogem,
+.legend-bogem::before {
+    background: #efe5bf;
+}
+.category-meomi,
+.legend-meomi::before {
+    background: #efd7ca;
+}
+.category-hyeobchu,
+.legend-hyeobchu::before {
+    background: #dbe7da;
+}
+.category-etc,
+.legend-etc::before {
+    background: #e8e1ec;
+}
+
+.category-bogem {
+    color: #5f4d15;
+}
+.category-meomi {
+    color: #6c4032;
+}
+.category-hyeobchu {
+    color: #31573b;
+}
+.category-etc {
+    color: #594068;
+}
+
+
+/* =========================
+   폼 확장
+========================= */
+
+.form-row.two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+
+/* =========================
+   상세 팝업
+========================= */
+
+.detail-modal-content {
+    width: min(420px, 92%);
+    position: relative;
+    border-radius: 18px;
+}
+
+.close-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid #d8d1c7;
+    background: white;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.detail-category-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-bottom: 12px;
+    background: #f0e8d8;
+}
+
+.detail-title {
+    font-size: 32px;
+    margin: 0 0 18px;
+    line-height: 1.25;
+    font-weight: 800;
+}
+
+.detail-table {
+    border-top: 1px solid #e5ddd2;
+}
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5ddd2;
+    font-size: 15px;
+}
+
+.detail-label {
+    color: #8a8175;
+    font-weight: 600;
+}
+
+
+/* =========================
+   모바일
+========================= */
+
+@media (max-width: 900px) {
+    .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+}
