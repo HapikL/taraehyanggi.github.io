@@ -1041,3 +1041,26 @@ body {
 .holiday-cell {
     border-color: #efcaca;
 }
+/* =========================
+   달력 날짜 배경 정리
+========================= */
+
+.day {
+    background: #ffffff;
+}
+
+/* 일요일 */
+.day.sunday-cell {
+    background: #fff3f3;
+}
+
+/* 토요일 */
+.day.saturday-cell {
+    background: #f2f6ff;
+}
+
+/* 현재 달 밖의 빈칸 */
+.day.empty-day {
+    background: #fafafa;
+    cursor: default;
+}
