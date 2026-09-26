@@ -309,8 +309,48 @@ function renderCalendar() {
         );
 
         dayElement.dataset.date = dateString;
+dayElement.addEventListener('dragover', (e) => {
+    if (!isAdmin) {
+        return;
+    }
 
+    e.preventDefault();
 
+    dayElement.classList.add('drag-over');
+});
+dayElement.addEventListener('dragleave', () => {
+    dayElement.classList.remove('drag-over');
+});
+        dayElement.addEventListener('drop', async (e) => {
+    if (!isAdmin) {
+        return;
+    }
+
+    e.preventDefault();
+
+    dayElement.classList.remove('drag-over');
+
+    const eventId = e.dataTransfer.getData('text/plain');
+
+    if (!eventId) {
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('events')
+        .update({
+            start_date: dateString
+        })
+        .eq('id', eventId);
+
+    if (error) {
+        console.error('일정 이동 실패:', error);
+        alert('일정 이동에 실패했습니다.');
+        return;
+    }
+
+    await loadEvents();
+});
         /* =========================
            관리자 날짜 클릭
         ========================= */
@@ -375,7 +415,24 @@ eventHost.value = '';
 
     eventElement.classList.add('event');
     eventElement.classList.add(getCategoryClass(event.category));
+            
+eventElement.draggable = isAdmin;
+eventElement.dataset.eventId = event.id;
+            eventElement.addEventListener('dragstart', (e) => {
+    if (!isAdmin) {
+        e.preventDefault();
+        return;
+    }
 
+    e.dataTransfer.setData('text/plain', event.id);
+    e.dataTransfer.effectAllowed = 'move';
+
+    eventElement.classList.add('dragging');
+});
+       eventElement.addEventListener('dragend', () => {
+    eventElement.classList.remove('dragging');
+});
+            
     eventElement.innerHTML = `
         <div class="event-time">${event.event_time || '--:--'}</div>
         <div class="event-title">${event.title || ''}</div>
