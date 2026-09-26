@@ -380,7 +380,8 @@ eventHost.value = '';
 
     eventElement.addEventListener('click', (e) => {
         e.stopPropagation();
-
+editingEventId = event.id;
+        
         detailCategoryBadge.textContent = event.category || '기타';
         detailCategoryBadge.className = `detail-category-badge ${getCategoryClass(event.category)}`;
 
@@ -486,7 +487,7 @@ saveEventButton.addEventListener('click', async () => {
         alert('관리자만 일정을 저장할 수 있습니다.');
         return;
     }
-
+console.log('현재 editingEventId:', editingEventId);
     const title = eventTitle.value.trim();
 
     if (!title) {
@@ -508,7 +509,7 @@ saveEventButton.addEventListener('click', async () => {
 
     let error;
 
-    if (editingEventId) {
+    if (editingEventId !== null) {
         const result = await supabaseClient
             .from('events')
             .update(eventData)
