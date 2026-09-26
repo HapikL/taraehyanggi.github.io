@@ -23,13 +23,15 @@ const selectedDateText = document.getElementById('selectedDateText');
 
 const cancelEventButton = document.getElementById('cancelEventButton');
 const saveEventButton = document.getElementById('saveEventButton');
+const deleteEventButton = document.getElementById('deleteEventButton');
+const eventModalTitle = document.getElementById('eventModalTitle');
 
 let currentDate = new Date();
 let events = [];
 let selectedDate = null;
 let currentUser = null;
 let isAdmin = false;
-
+let editingEventId = null;
 
 /* =========================
    로그인 상태 확인
@@ -241,22 +243,27 @@ function renderCalendar() {
            관리자 날짜 클릭
         ========================= */
 
-        dayElement.addEventListener('click', () => {
-            if (!isAdmin) {
-                return;
-            }
+dayElement.addEventListener('click', () => {
+    if (!isAdmin) {
+        return;
+    }
 
-            selectedDate = dateString;
+    editingEventId = null;
+    selectedDate = dateString;
 
-            selectedDateText.textContent =
-                `선택한 날짜: ${selectedDate}`;
+    eventModalTitle.textContent = '일정 추가';
 
-            eventTitle.value = '';
-            eventDescription.value = '';
-            eventCategory.value = '개인';
+    selectedDateText.textContent =
+        `선택한 날짜: ${selectedDate}`;
 
-            eventModal.classList.remove('hidden');
-        });
+    eventTitle.value = '';
+    eventDescription.value = '';
+    eventCategory.value = '개인';
+
+    deleteEventButton.style.display = 'none';
+
+    eventModal.classList.remove('hidden');
+});
 
 
         /* 오늘 표시 */
@@ -289,17 +296,41 @@ function renderCalendar() {
         );
 
         dayEvents.forEach(event => {
-            const eventElement = document.createElement('div');
+    const eventElement = document.createElement('div');
 
-            eventElement.classList.add('event');
+    eventElement.classList.add('event');
 
-            eventElement.textContent = event.title;
+    eventElement.textContent = event.title;
 
-            eventElement.title =
-                event.description || event.title;
+    eventElement.title =
+        event.description || event.title;
 
-            dayElement.appendChild(eventElement);
-        });
+    eventElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        if (!isAdmin) {
+            return;
+        }
+
+        editingEventId = event.id;
+        selectedDate = event.start_date;
+
+        eventModalTitle.textContent = '일정 수정';
+
+        selectedDateText.textContent =
+            `선택한 날짜: ${selectedDate}`;
+
+        eventTitle.value = event.title || '';
+        eventDescription.value = event.description || '';
+        eventCategory.value = event.category || '개인';
+
+        deleteEventButton.style.display = 'inline-block';
+
+        eventModal.classList.remove('hidden');
+    });
+
+    dayElement.appendChild(eventElement);
+});
 
         calendarGrid.appendChild(dayElement);
     }
@@ -349,6 +380,8 @@ todayButton.addEventListener('click', () => {
 
 cancelEventButton.addEventListener('click', () => {
     eventModal.classList.add('hidden');
+
+    editingEventId = null;
 });
 
 
@@ -385,6 +418,39 @@ saveEventButton.addEventListener('click', async () => {
     }
 
     eventModal.classList.add('hidden');
+
+    await loadEvents();
+});
+
+deleteEventButton.addEventListener('click', async () => {
+    if (!isAdmin) {
+        return;
+    }
+
+    if (!editingEventId) {
+        return;
+    }
+
+    const confirmed = confirm('이 일정을 삭제할까요?');
+
+    if (!confirmed) {
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('events')
+        .delete()
+        .eq('id', editingEventId);
+
+    if (error) {
+        console.error('일정 삭제 실패:', error);
+        alert('일정 삭제에 실패했습니다.');
+        return;
+    }
+
+    eventModal.classList.add('hidden');
+
+    editingEventId = null;
 
     await loadEvents();
 });
