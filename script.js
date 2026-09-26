@@ -23,6 +23,25 @@ const selectedDateText = document.getElementById('selectedDateText');
 
 const cancelEventButton = document.getElementById('cancelEventButton');
 const saveEventButton = document.getElementById('saveEventButton');
+const eventTime = document.getElementById('eventTime');
+const eventPeople = document.getElementById('eventPeople');
+const eventHost = document.getElementById('eventHost');
+
+const todayDateLabel = document.getElementById('todayDateLabel');
+const todayCountBadge = document.getElementById('todayCountBadge');
+const todaySummaryList = document.getElementById('todaySummaryList');
+
+const detailModal = document.getElementById('detailModal');
+const closeDetailModalButton = document.getElementById('closeDetailModalButton');
+const editFromDetailButton = document.getElementById('editFromDetailButton');
+
+const detailCategoryBadge = document.getElementById('detailCategoryBadge');
+const detailTitle = document.getElementById('detailTitle');
+const detailDate = document.getElementById('detailDate');
+const detailTime = document.getElementById('detailTime');
+const detailPeople = document.getElementById('detailPeople');
+const detailHost = document.getElementById('detailHost');
+const detailDescription = document.getElementById('detailDescription');
 const deleteEventButton = document.getElementById('deleteEventButton');
 const eventModalTitle = document.getElementById('eventModalTitle');
 
@@ -142,6 +161,7 @@ async function loadEvents() {
     events = data || [];
 
     renderCalendar();
+    renderTodaySummary();
 }
 
 
@@ -155,8 +175,53 @@ function formatDate(year, month, day) {
 
     return `${year}-${monthString}-${dayString}`;
 }
+function getCategoryClass(category) {
+    if (category === '보겜') return 'category-bogem';
+    if (category === '머미') return 'category-meomi';
+    if (category === '협추') return 'category-hyeobchu';
+    return 'category-etc';
+}
 
+function formatKoreanDate(dateString) {
+    const date = new Date(dateString);
 
+    const weekNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${weekNames[date.getDay()]}`;
+}
+function renderTodaySummary() {
+    const today = new Date();
+
+    const todayString = formatDate(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+    );
+
+    const todayEvents = events
+        .filter(event => event.start_date === todayString)
+        .sort((a, b) => (a.event_time || '').localeCompare(b.event_time || ''));
+
+    todayDateLabel.textContent = formatKoreanDate(todayString);
+    todayCountBadge.textContent = `${todayEvents.length}건`;
+
+    if (todayEvents.length === 0) {
+        todaySummaryList.textContent = '오늘 일정이 없습니다.';
+        return;
+    }
+
+    todaySummaryList.innerHTML = todayEvents.map(event => {
+        return `
+            <div class="today-summary-item">
+                <strong>${event.category || '기타'}</strong>
+                <span>${event.title || ''}</span>
+                <span>🕒 ${event.event_time || '--:--'}</span>
+                <span>👥 ${event.people_count ?? '-'}명</span>
+                <span>벙주 ${event.host_name || '-'}</span>
+            </div>
+        `;
+    }).join('');
+}
 /* =========================
    달력 그리기
 ========================= */
@@ -259,6 +324,9 @@ dayElement.addEventListener('click', () => {
     eventTitle.value = '';
     eventDescription.value = '';
     eventCategory.value = '머미';
+    eventTime.value = '';
+eventPeople.value = '';
+eventHost.value = '';
 
     deleteEventButton.style.display = 'none';
 
@@ -299,38 +367,57 @@ dayElement.addEventListener('click', () => {
     const eventElement = document.createElement('div');
 
     eventElement.classList.add('event');
-            
-eventElement.classList.add(
-    `category-${event.category}`
-);
-            
-    eventElement.textContent = event.title;
+    eventElement.classList.add(getCategoryClass(event.category));
 
-    eventElement.title =
-        event.description || event.title;
+    eventElement.innerHTML = `
+        <div class="event-time">${event.event_time || '--:--'}</div>
+        <div class="event-title">${event.title || ''}</div>
+        <div class="event-meta">
+            <span>${event.people_count ?? '-'}명</span>
+            <span>벙주 ${event.host_name || '-'}</span>
+        </div>
+    `;
 
     eventElement.addEventListener('click', (e) => {
         e.stopPropagation();
 
-        if (!isAdmin) {
-            return;
+        detailCategoryBadge.textContent = event.category || '기타';
+        detailCategoryBadge.className = `detail-category-badge ${getCategoryClass(event.category)}`;
+
+        detailTitle.textContent = event.title || '';
+        detailDate.textContent = formatKoreanDate(event.start_date);
+        detailTime.textContent = event.event_time || '-';
+        detailPeople.textContent = `${event.people_count ?? '-'}명`;
+        detailHost.textContent = event.host_name || '-';
+        detailDescription.textContent = event.description || '-';
+
+        if (isAdmin) {
+            editFromDetailButton.style.display = 'inline-block';
+        } else {
+            editFromDetailButton.style.display = 'none';
         }
 
-        editingEventId = event.id;
-        selectedDate = event.start_date;
+        editFromDetailButton.onclick = () => {
+            detailModal.classList.add('hidden');
 
-        eventModalTitle.textContent = '일정 수정';
+            editingEventId = event.id;
+            selectedDate = event.start_date;
 
-        selectedDateText.textContent =
-            `선택한 날짜: ${selectedDate}`;
+            eventModalTitle.textContent = '일정 수정';
+            selectedDateText.textContent = `선택한 날짜: ${selectedDate}`;
 
-        eventTitle.value = event.title || '';
-        eventDescription.value = event.description || '';
-        eventCategory.value = event.category || '머미';
+            eventTitle.value = event.title || '';
+            eventTime.value = event.event_time || '';
+            eventPeople.value = event.people_count ?? '';
+            eventHost.value = event.host_name || '';
+            eventDescription.value = event.description || '';
+            eventCategory.value = event.category || '머미';
 
-        deleteEventButton.style.display = 'inline-block';
+            deleteEventButton.style.display = 'inline-block';
+            eventModal.classList.remove('hidden');
+        };
 
-        eventModal.classList.remove('hidden');
+        detailModal.classList.remove('hidden');
     });
 
     dayElement.appendChild(eventElement);
@@ -384,10 +471,11 @@ todayButton.addEventListener('click', () => {
 
 cancelEventButton.addEventListener('click', () => {
     eventModal.classList.add('hidden');
-
     editingEventId = null;
 });
-
+closeDetailModalButton.addEventListener('click', () => {
+    detailModal.classList.add('hidden');
+});
 
 /* =========================
    일정 저장
@@ -395,7 +483,7 @@ cancelEventButton.addEventListener('click', () => {
 
 saveEventButton.addEventListener('click', async () => {
     if (!isAdmin) {
-        alert('관리자만 일정을 추가할 수 있습니다.');
+        alert('관리자만 일정을 저장할 수 있습니다.');
         return;
     }
 
@@ -406,14 +494,34 @@ saveEventButton.addEventListener('click', async () => {
         return;
     }
 
-    const { error } = await supabaseClient
-        .from('events')
-        .insert({
-            title: title,
-            description: eventDescription.value.trim(),
-            start_date: selectedDate,
-            category: eventCategory.value
-        });
+    const eventData = {
+        title: title,
+        description: eventDescription.value.trim(),
+        start_date: selectedDate,
+        category: eventCategory.value,
+        event_time: eventTime.value.trim(),
+        people_count: eventPeople.value
+            ? parseInt(eventPeople.value, 10)
+            : null,
+        host_name: eventHost.value.trim()
+    };
+
+    let error;
+
+    if (editingEventId) {
+        const result = await supabaseClient
+            .from('events')
+            .update(eventData)
+            .eq('id', editingEventId);
+
+        error = result.error;
+    } else {
+        const result = await supabaseClient
+            .from('events')
+            .insert(eventData);
+
+        error = result.error;
+    }
 
     if (error) {
         console.error('일정 저장 실패:', error);
@@ -422,6 +530,8 @@ saveEventButton.addEventListener('click', async () => {
     }
 
     eventModal.classList.add('hidden');
+
+    editingEventId = null;
 
     await loadEvents();
 });
