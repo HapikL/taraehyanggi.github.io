@@ -1015,3 +1015,29 @@ body {
 .day.other-month.saturday-cell {
     background: #f8faff;
 }
+/* =========================
+   대한민국 공휴일
+========================= */
+
+.holiday-number {
+    color: #d64545;
+    font-weight: 800;
+}
+
+.holiday-name {
+    margin-top: -3px;
+    margin-bottom: 6px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #d64545;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.holiday-cell {
+    border-color: #efcaca;
+}
