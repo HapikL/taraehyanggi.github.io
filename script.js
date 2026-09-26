@@ -216,22 +216,6 @@ loginPassword.addEventListener('keydown', (e) => {
     }
 });
 
-    if (error) {
-        alert('로그인에 실패했습니다.');
-        console.error(error);
-        return;
-    }
-
-    await checkLogin();
-
-    if (isAdmin) {
-        alert('관리자로 로그인되었습니다.');
-    } else {
-        alert('로그인되었습니다.');
-    }
-});
-
-
 /* =========================
    로그아웃
 ========================= */
