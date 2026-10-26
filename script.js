@@ -50,6 +50,7 @@ const todaySummaryList = document.getElementById('todaySummaryList');
 const detailModal = document.getElementById('detailModal');
 const closeDetailModalButton = document.getElementById('closeDetailModalButton');
 const editFromDetailButton = document.getElementById('editFromDetailButton');
+const addToCalendarButton = document.getElementById('addToCalendarButton');
 
 const detailCategoryBadge = document.getElementById('detailCategoryBadge');
 const detailTitle = document.getElementById('detailTitle');
@@ -68,6 +69,7 @@ let selectedDate = null;
 let currentUser = null;
 let isAdmin = false;
 let editingEventId = null;
+let selectedDetailEvent = null;
 let selectedCategoryFilter = '전체';
 const koreanHolidays = {
     '2026-01-01': '신정',
@@ -314,6 +316,162 @@ function formatKoreanDate(dateString) {
 
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${weekNames[date.getDay()]}`;
 }
+function formatICSDate(dateString, timeString) {
+
+    const time = timeString || '00:00';
+
+    const [year, month, day] =
+        dateString.split('-');
+
+    const [hour, minute] =
+        time.split(':');
+
+    return `${year}${month}${day}T${hour}${minute}00`;
+}
+
+
+function escapeICS(text) {
+
+    if (!text) return '';
+
+    return String(text)
+        .replace(/\\/g, '\\\\')
+        .replace(/\n/g, '\\n')
+        .replace(/,/g, '\\,')
+        .replace(/;/g, '\\;');
+}
+
+
+function downloadICS(event) {
+
+    const startDate =
+        formatICSDate(
+            event.start_date,
+            event.event_time
+        );
+
+    /*
+       종료시간 정보가 따로 없으므로
+       일단 시작시간 기준 1시간 일정으로 생성
+    */
+
+    const start =
+        new Date(
+            `${event.start_date}T${event.event_time || '00:00'}:00`
+        );
+
+    const end =
+        new Date(start.getTime() + 60 * 60 * 1000);
+
+    const endYear =
+        end.getFullYear();
+
+    const endMonth =
+        String(end.getMonth() + 1).padStart(2, '0');
+
+    const endDay =
+        String(end.getDate()).padStart(2, '0');
+
+    const endHour =
+        String(end.getHours()).padStart(2, '0');
+
+    const endMinute =
+        String(end.getMinutes()).padStart(2, '0');
+
+    const endDate =
+        `${endYear}${endMonth}${endDay}T${endHour}${endMinute}00`;
+
+
+    const descriptionParts = [];
+
+    if (event.category) {
+        descriptionParts.push(
+            `카테고리: ${event.category}`
+        );
+    }
+
+    if (event.ab_type) {
+        descriptionParts.push(
+            `구분: ${event.ab_type}`
+        );
+    }
+
+    if (event.people_count) {
+        descriptionParts.push(
+            `인원: ${event.people_count}명`
+        );
+    }
+
+    if (event.host_name) {
+        descriptionParts.push(
+            `벙주: ${event.host_name}`
+        );
+    }
+
+    if (event.description) {
+        descriptionParts.push(
+            event.description
+        );
+    }
+
+
+    const description =
+        descriptionParts.join('\n');
+
+
+    const icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//My Calendar//KR//',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+
+        'BEGIN:VEVENT',
+
+        `UID:${event.id}@mycalendar`,
+
+        `DTSTART:${startDate}`,
+        `DTEND:${endDate}`,
+
+        `SUMMARY:${escapeICS(event.title)}`,
+
+        `DESCRIPTION:${escapeICS(description)}`,
+
+        'END:VEVENT',
+        'END:VCALENDAR'
+    ].join('\r\n');
+
+
+    const blob =
+        new Blob(
+            [icsContent],
+            {
+                type: 'text/calendar;charset=utf-8'
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const link =
+        document.createElement('a');
+
+    link.href = url;
+
+    link.download =
+        `${event.title || '일정'}.ics`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+}
+
 function renderTodaySummary() {
     const today = new Date();
 
@@ -657,6 +815,7 @@ eventElement.innerHTML = `
     eventElement.addEventListener('click', (e) => {
         e.stopPropagation();
 editingEventId = event.id;
+        selectedDetailEvent = event;
         
         detailCategoryBadge.textContent = event.category || '기타';
         detailCategoryBadge.className = `detail-category-badge ${getCategoryClass(event.category)}`;
@@ -814,6 +973,16 @@ cancelEventButton.addEventListener('click', () => {
 });
 closeDetailModalButton.addEventListener('click', () => {
     detailModal.classList.add('hidden');
+});
+
+addToCalendarButton.addEventListener('click', () => {
+
+    if (!selectedDetailEvent) {
+        alert('일정 정보를 찾을 수 없습니다.');
+        return;
+    }
+
+    downloadICS(selectedDetailEvent);
 });
 
 /* =========================
