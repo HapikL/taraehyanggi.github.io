@@ -182,6 +182,11 @@ const parkingModal =
         'parkingModal'
     );
 
+const parkingModalTitle =
+    document.getElementById(
+        'parkingModalTitle'
+    );
+
 const parkingName =
     document.getElementById(
         'parkingName'
@@ -249,6 +254,8 @@ let dailyParkingRecords = [];
 let currentFilter =
     'all';
 
+let editingParkingId =
+    null;
 
 
 /* ==================================================
@@ -508,8 +515,69 @@ headerLogoutButton.addEventListener(
 */
 
 function getEventPrice(
-    event
+    event,
+    payment = null
 ) {
+
+    const date =
+        parseDate(
+            event.start_date
+        );
+
+
+    const weekday =
+        date.getDay();
+
+
+    const weekend =
+        weekday === 0 ||
+        weekday === 6;
+
+
+    const pricePerPerson =
+        weekend
+            ? 12000
+            : 10000;
+
+
+    const people =
+        Number(
+            event.people_count
+        ) || 0;
+
+
+    const excludedPeople =
+        Math.max(
+            0,
+            Number(
+                payment?.excluded_people
+            ) || 0
+        );
+
+
+    const chargedPeople =
+        Math.max(
+            0,
+            people -
+            excludedPeople
+        );
+
+
+    return {
+
+        people,
+
+        excludedPeople,
+
+        chargedPeople,
+
+        pricePerPerson,
+
+        total:
+            chargedPeople *
+            pricePerPerson
+    };
+} {
 
     const date =
         parseDate(
@@ -820,10 +888,11 @@ function renderMonthlySettlement() {
                 true;
 
 
-            const price =
-                getEventPrice(
-                    event
-                );
+    const price =
+    getEventPrice(
+        event,
+        payment
+    );
 
 
             const row =
@@ -1035,22 +1104,23 @@ function renderMonthSummary() {
     monthlyEvents.forEach(
         event => {
 
-            const amount =
-                getEventPrice(
-                    event
-                ).total;
+  const payment =
+    monthlyPayments.find(
+        item =>
+            item.event_id ===
+            event.id
+    );
+
+
+const amount =
+    getEventPrice(
+        event,
+        payment
+    ).total;
 
 
             eventAmount +=
                 amount;
-
-
-            const payment =
-                monthlyPayments.find(
-                    item =>
-                        item.event_id ===
-                        event.id
-                );
 
 
             if (
@@ -1378,18 +1448,19 @@ function renderDailyEvents() {
     dailyEvents.forEach(
         event => {
 
-            const price =
-                getEventPrice(
-                    event
-                );
+const payment =
+    dailyPayments.find(
+        item =>
+            item.event_id ===
+            event.id
+    );
 
 
-            const payment =
-                dailyPayments.find(
-                    item =>
-                        item.event_id ===
-                        event.id
-                );
+const price =
+    getEventPrice(
+        event,
+        payment
+    );
 
 
             const received =
@@ -1446,24 +1517,51 @@ function renderDailyEvents() {
                 </div>
 
 
-                <div>
+               <div>
 
-                    ${price.people}명
-                    ×
-                    ${formatMoney(
-                        price.pricePerPerson
-                    )}
+    총 ${price.people}명
 
-                </div>
+    <div class="daily-event-meta">
+        실제 정산 ${price.chargedPeople}명
+    </div>
+
+</div>
 
 
-                <div class="daily-event-amount">
+<div class="exclude-people-control">
 
-                    ${formatMoney(
-                        price.total
-                    )}
+    <span class="exclude-label">
+        제외
+    </span>
 
-                </div>
+    <button
+        class="exclude-minus"
+        type="button"
+    >
+        −
+    </button>
+
+    <span class="exclude-count">
+        ${price.excludedPeople}
+    </span>
+
+    <button
+        class="exclude-plus"
+        type="button"
+    >
+        +
+    </button>
+
+</div>
+
+
+<div class="daily-event-amount">
+
+    ${formatMoney(
+        price.total
+    )}
+
+</div>
 
 
                 <button
@@ -1487,7 +1585,61 @@ function renderDailyEvents() {
                 </button>
             `;
 
+const minusButton =
+    row.querySelector(
+        '.exclude-minus'
+    );
 
+const plusButton =
+    row.querySelector(
+        '.exclude-plus'
+    );
+
+
+minusButton.addEventListener(
+    'click',
+    async () => {
+
+        const current =
+            price.excludedPeople;
+
+
+        await setExcludedPeople(
+            event.id,
+            Math.max(
+                0,
+                current - 1
+            )
+        );
+    }
+);
+
+
+plusButton.addEventListener(
+    'click',
+    async () => {
+
+        const current =
+            price.excludedPeople;
+
+
+        /*
+           전체 인원보다 많이 제외되지 않도록 제한
+        */
+
+        const next =
+            Math.min(
+                price.people,
+                current + 1
+            );
+
+
+        await setExcludedPeople(
+            event.id,
+            next
+        );
+    }
+);
             const button =
                 row.querySelector(
                     '.payment-status-button'
@@ -1604,7 +1756,12 @@ function renderDailyParking() {
 
                 </div>
 
-
+<button
+    class="edit-parking-button"
+    type="button"
+>
+    수정
+</button>
                 <button
                     class="delete-parking-button"
                     type="button"
@@ -1613,7 +1770,21 @@ function renderDailyParking() {
                 </button>
             `;
 
+const editButton =
+    row.querySelector(
+        '.edit-parking-button'
+    );
 
+
+editButton.addEventListener(
+    'click',
+    () => {
+
+        openParkingModal(
+            record
+        );
+    }
+);
             const deleteButton =
                 row.querySelector(
                     '.delete-parking-button'
@@ -1696,21 +1867,24 @@ function renderDailyTotals() {
     dailyEvents.forEach(
         event => {
 
-            const amount =
-                getEventPrice(
-                    event
-                ).total;
+const payment =
+    dailyPayments.find(
+        item =>
+            item.event_id ===
+            event.id
+    );
+
+
+const amount =
+    getEventPrice(
+        event,
+        payment
+    ).total;
 
 
             eventAmount +=
                 amount;
 
-
-            const payment =
-                dailyPayments.find(
-                    item =>
-                        item.event_id ===
-                        event.id
                 );
 
 
@@ -1804,7 +1978,71 @@ function renderDailySettlement() {
     renderDailyTotals();
 }
 
+/* ==================================================
+   27-1. 이용료 제외 인원 저장
+================================================== */
 
+async function setExcludedPeople(
+    eventId,
+    excludedPeople
+) {
+
+    const existingPayment =
+        dailyPayments.find(
+            item =>
+                item.event_id ===
+                eventId
+        );
+
+
+    const received =
+        existingPayment?.received ===
+        true;
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from(
+                'event_payments'
+            )
+            .upsert({
+
+                event_id:
+                    eventId,
+
+                received:
+                    received,
+
+                excluded_people:
+                    excludedPeople,
+
+                updated_at:
+                    new Date()
+                        .toISOString()
+            });
+
+
+    if (error) {
+
+        console.error(
+            '제외 인원 저장 실패:',
+            error
+        );
+
+        alert(
+            '제외 인원 저장에 실패했습니다.'
+        );
+
+        return;
+    }
+
+
+    await loadMonthlySettlement();
+
+    await loadDailySettlement();
+}
 
 /* ==================================================
    28. 수납 상태 저장
@@ -1822,17 +2060,34 @@ async function setPaymentStatus(
             .from(
                 'event_payments'
             )
-            .upsert({
+           .upsert({
 
-                event_id:
-                    eventId,
+    event_id:
+        eventId,
 
-                received,
+    received,
 
-                updated_at:
-                    new Date()
-                        .toISOString()
-            });
+    excluded_people:
+        (
+            dailyPayments.find(
+                item =>
+                    item.event_id ===
+                    eventId
+            )?.excluded_people
+            ??
+            monthlyPayments.find(
+                item =>
+                    item.event_id ===
+                    eventId
+            )?.excluded_people
+            ??
+            0
+        ),
+
+    updated_at:
+        new Date()
+            .toISOString()
+});
 
 
     if (error) {
@@ -1939,19 +2194,54 @@ settlementDate.addEventListener(
    30. 주차 팝업 열기
 ================================================== */
 
-function openParkingModal() {
+function openParkingModal(
+    record = null
+) {
 
-    parkingName.value =
-        '';
+    if (record) {
 
-    parkingCarNumber.value =
-        '';
+        editingParkingId =
+            record.id;
 
-    parkingHours.value =
-        '';
+        parkingModalTitle.textContent =
+            '주차 정산 수정';
 
-    parkingPreview.textContent =
-        '0원';
+        parkingName.value =
+            record.person_name || '';
+
+        parkingCarNumber.value =
+            record.car_number || '';
+
+        parkingHours.value =
+            record.parking_hours || '';
+
+        parkingPreview.textContent =
+            formatMoney(
+                Number(
+                    record.parking_hours
+                ) * 100
+            );
+
+    } else {
+
+        editingParkingId =
+            null;
+
+        parkingModalTitle.textContent =
+            '주차 정산 추가';
+
+        parkingName.value =
+            '';
+
+        parkingCarNumber.value =
+            '';
+
+        parkingHours.value =
+            '';
+
+        parkingPreview.textContent =
+            '0원';
+    }
 
 
     parkingModal.classList.remove(
@@ -1971,13 +2261,13 @@ function openParkingModal() {
 
 addParkingButton.addEventListener(
     'click',
-    openParkingModal
+    () => openParkingModal()
 );
 
 
 addParkingTopButton.addEventListener(
     'click',
-    openParkingModal
+    () => openParkingModal()
 );
 
 
@@ -2054,27 +2344,72 @@ saveParkingButton.addEventListener(
         }
 
 
-        const {
-            error
-        } =
-            await supabaseClient
-                .from(
-                    'parking_records'
-                )
-                .insert({
+let error;
 
-                    parking_date:
-                        settlementDate.value,
 
-                    person_name:
-                        name,
+/* 기존 주차 수정 */
 
-                    car_number:
-                        carNumber,
+if (editingParkingId) {
 
-                    parking_hours:
-                        hours
-                });
+    const result =
+        await supabaseClient
+            .from(
+                'parking_records'
+            )
+            .update({
+
+                parking_date:
+                    settlementDate.value,
+
+                person_name:
+                    name,
+
+                car_number:
+                    carNumber,
+
+                parking_hours:
+                    hours
+            })
+            .eq(
+                'id',
+                editingParkingId
+            );
+
+
+    error =
+        result.error;
+
+}
+
+
+/* 새 주차 추가 */
+
+else {
+
+    const result =
+        await supabaseClient
+            .from(
+                'parking_records'
+            )
+            .insert({
+
+                parking_date:
+                    settlementDate.value,
+
+                person_name:
+                    name,
+
+                car_number:
+                    carNumber,
+
+                parking_hours:
+                    hours
+            });
+
+
+    error =
+        result.error;
+}
 
 
         if (error) {
@@ -2095,7 +2430,9 @@ saveParkingButton.addEventListener(
         parkingModal.classList.add(
             'hidden'
         );
-
+       
+editingParkingId =
+    null;
 
         await loadDailySettlement();
 
@@ -2115,6 +2452,8 @@ cancelParkingButton.addEventListener(
 
         parkingModal.classList.add(
             'hidden'
+           editingParkingId =
+    null;
         );
     }
 );
