@@ -1,414 +1,1948 @@
-const SUPABASE_URL = 'https://ipostkzlxgxmawmdkufz.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_-Pkqj4168gg02OdbgLcr3Q_1--IoEn7';
+/* ==================================================
+   01. Supabase 연결
+================================================== */
 
-const supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-const calendarGrid = document.getElementById('calendarGrid');
-const calendarTitle = document.getElementById('calendarTitle');
+const SUPABASE_URL =
+    'https://ipostkzlxgxmawmdkufz.supabase.co';
 
-const prevMonthButton = document.getElementById('prevMonth');
-const nextMonthButton = document.getElementById('nextMonth');
-const todayButton = document.getElementById('todayButton');
+const SUPABASE_KEY =
+    'sb_publishable_-Pkqj4168gg02OdbgLcr3Q_1--IoEn7';
 
-const loginButton = document.getElementById('loginButton');
-const logoutButton = document.getElementById('logoutButton');
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+
+/* ==================================================
+   02. DOM 요소
+================================================== */
+
+/* 달력 */
+
+const calendarGrid =
+    document.getElementById('calendarGrid');
+
+const calendarTitle =
+    document.getElementById('calendarTitle');
+
+const prevMonthButton =
+    document.getElementById('prevMonth');
+
+const nextMonthButton =
+    document.getElementById('nextMonth');
+
+const todayButton =
+    document.getElementById('todayButton');
+
+
+/* 로그인 */
+
+const loginButton =
+    document.getElementById('loginButton');
+
+const logoutButton =
+    document.getElementById('logoutButton');
+
 const quickAddEventButton =
     document.getElementById('quickAddEventButton');
-const loginModal = document.getElementById('loginModal');
 
-const loginEmail = document.getElementById('loginEmail');
-const loginPassword = document.getElementById('loginPassword');
+const loginModal =
+    document.getElementById('loginModal');
 
-const submitLoginButton = document.getElementById('submitLoginButton');
-const closeLoginButton = document.getElementById('closeLoginButton');
+const loginEmail =
+    document.getElementById('loginEmail');
 
-const togglePasswordButton = document.getElementById('togglePasswordButton');
+const loginPassword =
+    document.getElementById('loginPassword');
 
-const loginErrorMessage = document.getElementById('loginErrorMessage');
+const submitLoginButton =
+    document.getElementById('submitLoginButton');
 
-const eventModal = document.getElementById('eventModal');
-const eventTitle = document.getElementById('eventTitle');
+const closeLoginButton =
+    document.getElementById('closeLoginButton');
+
+const togglePasswordButton =
+    document.getElementById('togglePasswordButton');
+
+const loginErrorMessage =
+    document.getElementById('loginErrorMessage');
+
+
+/* 일정 추가 / 수정 */
+
+const eventModal =
+    document.getElementById('eventModal');
+
+const eventModalTitle =
+    document.getElementById('eventModalTitle');
+
 const eventDate =
     document.getElementById('eventDate');
-const eventDescription = document.getElementById('eventDescription');
-const eventCategory = document.getElementById('eventCategory');
-const eventABType = document.getElementById('eventABType');
-const selectedDateText = document.getElementById('selectedDateText');
 
-const cancelEventButton = document.getElementById('cancelEventButton');
-const saveEventButton = document.getElementById('saveEventButton');
-const eventTime = document.getElementById('eventTime');
-const eventPeople = document.getElementById('eventPeople');
-const eventHost = document.getElementById('eventHost');
+const eventTitle =
+    document.getElementById('eventTitle');
 
-const todayDateLabel = document.getElementById('todayDateLabel');
-const todayCountBadge = document.getElementById('todayCountBadge');
-const todaySummaryList = document.getElementById('todaySummaryList');
+const eventTime =
+    document.getElementById('eventTime');
 
-const detailModal = document.getElementById('detailModal');
-const closeDetailModalButton = document.getElementById('closeDetailModalButton');
-const editFromDetailButton = document.getElementById('editFromDetailButton');
-const addToCalendarButton = document.getElementById('addToCalendarButton');
+const eventPeople =
+    document.getElementById('eventPeople');
 
-const detailCategoryBadge = document.getElementById('detailCategoryBadge');
-const detailTitle = document.getElementById('detailTitle');
-const detailDate = document.getElementById('detailDate');
-const detailTime = document.getElementById('detailTime');
-const detailPeople = document.getElementById('detailPeople');
-const detailHost = document.getElementById('detailHost');
-const detailDescription = document.getElementById('detailDescription');
-const deleteEventButton = document.getElementById('deleteEventButton');
-const eventModalTitle = document.getElementById('eventModalTitle');
-const filterButtons = document.querySelectorAll('.filter-button');
+const eventHost =
+    document.getElementById('eventHost');
+
+const eventDescription =
+    document.getElementById('eventDescription');
+
+const eventCategory =
+    document.getElementById('eventCategory');
+
+const eventNomad =
+    document.getElementById('eventNomad');
+
+const selectedDateText =
+    document.getElementById('selectedDateText');
+
+const saveEventButton =
+    document.getElementById('saveEventButton');
+
+const cancelEventButton =
+    document.getElementById('cancelEventButton');
+
+const deleteEventButton =
+    document.getElementById('deleteEventButton');
+
+
+/* 오늘 일정 */
+
+const todayDateLabel =
+    document.getElementById('todayDateLabel');
+
+const todayCountBadge =
+    document.getElementById('todayCountBadge');
+
+const todaySummaryList =
+    document.getElementById('todaySummaryList');
+
+
+/* 상세보기 */
+
+const detailModal =
+    document.getElementById('detailModal');
+
+const closeDetailModalButton =
+    document.getElementById('closeDetailModalButton');
+
+const editFromDetailButton =
+    document.getElementById('editFromDetailButton');
+
+const addToCalendarButton =
+    document.getElementById('addToCalendarButton');
+
+const detailCategoryBadge =
+    document.getElementById('detailCategoryBadge');
+
+const detailTitle =
+    document.getElementById('detailTitle');
+
+const detailDate =
+    document.getElementById('detailDate');
+
+const detailTime =
+    document.getElementById('detailTime');
+
+const detailPeople =
+    document.getElementById('detailPeople');
+
+const detailHost =
+    document.getElementById('detailHost');
+
+const detailDescription =
+    document.getElementById('detailDescription');
+
+
+/* 필터 */
+
+const filterButtons =
+    document.querySelectorAll('.filter-button');
+
+
+
+/* ==================================================
+   03. 전역 상태
+================================================== */
 
 let currentDate = new Date();
+
 let events = [];
+
 let selectedDate = null;
+
 let currentUser = null;
+
 let isAdmin = false;
+
 let editingEventId = null;
+
 let selectedDetailEvent = null;
+
 let selectedCategoryFilter = '전체';
-const koreanHolidays = {
-    '2026-01-01': '신정',
 
-    '2026-02-16': '설날 연휴',
-    '2026-02-17': '설날',
-    '2026-02-18': '설날 연휴',
 
-    '2026-03-01': '삼일절',
-    '2026-03-02': '대체공휴일',
 
-    '2026-05-01': '노동절',
-    '2026-05-05': '어린이날',
-    '2026-05-24': '부처님오신날',
-    '2026-05-25': '대체공휴일',
+/* ==================================================
+   04. 공통 유틸 함수
+================================================== */
 
-    '2026-06-06': '현충일',
+/* YYYY-MM-DD */
 
-    '2026-08-15': '광복절',
-    '2026-08-17': '대체공휴일',
+function formatDate(year, month, day) {
 
-    '2026-09-24': '추석 연휴',
-    '2026-09-25': '추석',
-    '2026-09-26': '추석 연휴',
+    const monthString =
+        String(month + 1).padStart(2, '0');
 
-    '2026-10-03': '개천절',
-    '2026-10-05': '대체공휴일',
+    const dayString =
+        String(day).padStart(2, '0');
 
-    '2026-10-09': '한글날',
-
-    '2026-12-25': '크리스마스'
-};
-/* =========================
-   로그인 상태 확인
-========================= */
-
-async function checkLogin() {
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
-
-    currentUser = user;
-
-    if (!user) {
-        isAdmin = false;
-
-        loginButton.style.display = 'inline-block';
-        logoutButton.style.display = 'none';
-        quickAddEventButton.style.display = 'none';
-        
-        return;
-    }
-
-    const { data: profile, error } = await supabaseClient
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-    if (error) {
-        console.error('프로필 확인 실패:', error);
-        isAdmin = false;
-    } else {
-        isAdmin = profile?.role === 'admin';
-    }
-
-    loginButton.style.display = 'none';
-    logoutButton.style.display = 'inline-block';
-    quickAddEventButton.style.display =
-    isAdmin ? 'inline-block' : 'none';
+    return `${year}-${monthString}-${dayString}`;
 }
 
 
-/* =========================
-   로그인
-========================= */
+/* YYYY-MM-DD를 로컬 Date로 변환 */
 
-loginButton.addEventListener('click', () => {
+function parseLocalDate(dateString) {
 
-    loginEmail.value = '';
-    loginPassword.value = '';
+    const [year, month, day] =
+        dateString.split('-').map(Number);
 
-    loginErrorMessage.textContent = '';
+    return new Date(
+        year,
+        month - 1,
+        day
+    );
+}
 
-    loginPassword.type = 'password';
-    togglePasswordButton.textContent = '보기';
 
-    loginModal.classList.remove('hidden');
+/* 한글 날짜 */
 
-    setTimeout(() => {
-        loginEmail.focus();
-    }, 100);
-});
+function formatKoreanDate(dateString) {
 
-submitLoginButton.addEventListener('click', async () => {
+    const date =
+        parseLocalDate(dateString);
 
-    const email = loginEmail.value.trim();
-    const password = loginPassword.value;
+    const weekNames = [
+        '일요일',
+        '월요일',
+        '화요일',
+        '수요일',
+        '목요일',
+        '금요일',
+        '토요일'
+    ];
 
-    loginErrorMessage.textContent = '';
+    return (
+        `${date.getFullYear()}년 ` +
+        `${date.getMonth() + 1}월 ` +
+        `${date.getDate()}일 ` +
+        `${weekNames[date.getDay()]}`
+    );
+}
 
-    if (!email) {
-        loginErrorMessage.textContent =
-            '이메일을 입력해주세요.';
+
+/* 카테고리 CSS */
+
+function getCategoryClass(category) {
+
+    if (category === '보겜') {
+        return 'category-bogem';
+    }
+
+    if (category === '머미') {
+        return 'category-meomi';
+    }
+
+    if (category === '협추') {
+        return 'category-hyeobchu';
+    }
+
+    return 'category-etc';
+}
+
+
+/* HTML 안전 처리 */
+
+function escapeHTML(value) {
+
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+
+
+/* ==================================================
+   05. 로그인 상태 확인
+================================================== */
+
+async function checkLogin() {
+
+    const {
+        data: { user }
+    } =
+        await supabaseClient.auth.getUser();
+
+    currentUser = user;
+
+
+    /* 로그아웃 상태 */
+
+    if (!user) {
+
+        isAdmin = false;
+
+        loginButton.style.display =
+            'inline-block';
+
+        logoutButton.style.display =
+            'none';
+
+        quickAddEventButton.style.display =
+            'none';
+
         return;
     }
 
-    if (!password) {
-        loginErrorMessage.textContent =
-            '비밀번호를 입력해주세요.';
-        return;
-    }
 
+    /* 관리자 권한 확인 */
 
-    submitLoginButton.disabled = true;
-    submitLoginButton.textContent = '로그인 중...';
-
-
-    const { error } =
-        await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
-
-
-    submitLoginButton.disabled = false;
-    submitLoginButton.textContent = '로그인';
+    const {
+        data: profile,
+        error
+    } =
+        await supabaseClient
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
 
 
     if (error) {
-        loginErrorMessage.textContent =
-            '이메일 또는 비밀번호가 올바르지 않습니다.';
 
-        console.error('로그인 실패:', error);
+        console.error(
+            '프로필 확인 실패:',
+            error
+        );
 
-        return;
-    }
-
-
-    await checkLogin();
-
-
-    loginPassword.value = '';
-
-    loginModal.classList.add('hidden');
-
-
-    if (isAdmin) {
-        alert('관리자로 로그인되었습니다.');
-    } else {
-        alert('로그인되었습니다.');
-    }
-});
-
-closeLoginButton.addEventListener('click', () => {
-
-    loginModal.classList.add('hidden');
-
-    loginPassword.value = '';
-    loginErrorMessage.textContent = '';
-});
-
-togglePasswordButton.addEventListener('click', () => {
-
-    if (loginPassword.type === 'password') {
-
-        loginPassword.type = 'text';
-
-        togglePasswordButton.textContent = '숨기기';
+        isAdmin = false;
 
     } else {
 
-        loginPassword.type = 'password';
-
-        togglePasswordButton.textContent = '보기';
+        isAdmin =
+            profile?.role === 'admin';
     }
-});
 
-loginPassword.addEventListener('keydown', (e) => {
 
-    if (e.key === 'Enter') {
-        submitLoginButton.click();
+    loginButton.style.display =
+        'none';
+
+    logoutButton.style.display =
+        'inline-block';
+
+    quickAddEventButton.style.display =
+        isAdmin
+            ? 'inline-block'
+            : 'none';
+}
+
+
+
+/* ==================================================
+   06. 로그인 / 로그아웃
+================================================== */
+
+/* 로그인창 열기 */
+
+loginButton.addEventListener(
+    'click',
+    () => {
+
+        loginEmail.value = '';
+        loginPassword.value = '';
+
+        loginErrorMessage.textContent = '';
+
+        loginPassword.type =
+            'password';
+
+        togglePasswordButton.textContent =
+            '보기';
+
+        loginModal.classList.remove(
+            'hidden'
+        );
+
+        setTimeout(
+            () => loginEmail.focus(),
+            100
+        );
     }
-});
-
-/* =========================
-   로그아웃
-========================= */
-
-logoutButton.addEventListener('click', async () => {
-    await supabaseClient.auth.signOut();
-
-    currentUser = null;
-    isAdmin = false;
-
-    await checkLogin();
-
-    alert('로그아웃되었습니다.');
-});
+);
 
 
-/* =========================
-   일정 불러오기
-========================= */
+/* 로그인 실행 */
+
+submitLoginButton.addEventListener(
+    'click',
+    async () => {
+
+        const email =
+            loginEmail.value.trim();
+
+        const password =
+            loginPassword.value;
+
+        loginErrorMessage.textContent = '';
+
+
+        if (!email) {
+
+            loginErrorMessage.textContent =
+                '이메일을 입력해주세요.';
+
+            return;
+        }
+
+
+        if (!password) {
+
+            loginErrorMessage.textContent =
+                '비밀번호를 입력해주세요.';
+
+            return;
+        }
+
+
+        submitLoginButton.disabled =
+            true;
+
+        submitLoginButton.textContent =
+            '로그인 중...';
+
+
+        const { error } =
+            await supabaseClient.auth
+                .signInWithPassword({
+                    email,
+                    password
+                });
+
+
+        submitLoginButton.disabled =
+            false;
+
+        submitLoginButton.textContent =
+            '로그인';
+
+
+        if (error) {
+
+            loginErrorMessage.textContent =
+                '이메일 또는 비밀번호가 올바르지 않습니다.';
+
+            console.error(
+                '로그인 실패:',
+                error
+            );
+
+            return;
+        }
+
+
+        await checkLogin();
+
+        loginPassword.value = '';
+
+        loginModal.classList.add(
+            'hidden'
+        );
+
+        renderCalendar();
+
+
+        if (isAdmin) {
+            alert(
+                '관리자로 로그인되었습니다.'
+            );
+        } else {
+            alert(
+                '로그인되었습니다.'
+            );
+        }
+    }
+);
+
+
+/* 로그인창 닫기 */
+
+closeLoginButton.addEventListener(
+    'click',
+    () => {
+
+        loginModal.classList.add(
+            'hidden'
+        );
+
+        loginPassword.value = '';
+
+        loginErrorMessage.textContent = '';
+    }
+);
+
+
+/* 비밀번호 보기 */
+
+togglePasswordButton.addEventListener(
+    'click',
+    () => {
+
+        const isHidden =
+            loginPassword.type ===
+            'password';
+
+        loginPassword.type =
+            isHidden
+                ? 'text'
+                : 'password';
+
+        togglePasswordButton.textContent =
+            isHidden
+                ? '숨기기'
+                : '보기';
+    }
+);
+
+
+/* Enter 로그인 */
+
+loginPassword.addEventListener(
+    'keydown',
+    (event) => {
+
+        if (event.key === 'Enter') {
+            submitLoginButton.click();
+        }
+    }
+);
+
+
+/* 로그아웃 */
+
+logoutButton.addEventListener(
+    'click',
+    async () => {
+
+        await supabaseClient.auth
+            .signOut();
+
+        currentUser = null;
+        isAdmin = false;
+
+        await checkLogin();
+
+        renderCalendar();
+
+        alert(
+            '로그아웃되었습니다.'
+        );
+    }
+);
+
+
+
+/* ==================================================
+   07. 일정 불러오기
+================================================== */
 
 async function loadEvents() {
-    const { data, error } = await supabaseClient
-        .from('events')
-        .select('*');
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from('events')
+            .select('*');
+
 
     if (error) {
-        console.error('일정 불러오기 실패:', error);
+
+        console.error(
+            '일정 불러오기 실패:',
+            error
+        );
+
         return;
     }
+
 
     events = data || [];
 
     renderCalendar();
+
     renderTodaySummary();
 }
 
 
-/* =========================
-   YYYY-MM-DD 변환
-========================= */
 
-function formatDate(year, month, day) {
-    const monthString = String(month + 1).padStart(2, '0');
-    const dayString = String(day).padStart(2, '0');
+/* ==================================================
+   08. 오늘 일정
+================================================== */
 
-    return `${year}-${monthString}-${dayString}`;
+function renderTodaySummary() {
+
+    const today = new Date();
+
+    const todayString =
+        formatDate(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        );
+
+
+    const todayEvents =
+        events
+            .filter(
+                event =>
+                    event.start_date ===
+                    todayString
+            )
+            .sort(
+                (a, b) =>
+                    (a.event_time || '')
+                        .localeCompare(
+                            b.event_time || ''
+                        )
+            );
+
+
+    todayDateLabel.textContent =
+        formatKoreanDate(
+            todayString
+        );
+
+    todayCountBadge.textContent =
+        `${todayEvents.length}건`;
+
+
+    const summaryCard =
+        document.querySelector(
+            '.today-summary-card'
+        );
+
+
+    if (todayEvents.length === 0) {
+
+        summaryCard.classList.add(
+            'no-events'
+        );
+
+        todaySummaryList.textContent =
+            '오늘 일정이 없습니다.';
+
+        return;
+    }
+
+
+    summaryCard.classList.remove(
+        'no-events'
+    );
+
+
+    todaySummaryList.innerHTML =
+        todayEvents
+            .map(event => {
+
+                return `
+                    <div class="today-summary-item">
+
+                        <strong>
+                            ${escapeHTML(
+                                event.category ||
+                                '기타'
+                            )}
+                        </strong>
+
+                        <span>
+                            ${escapeHTML(
+                                event.title || ''
+                            )}
+                        </span>
+
+                        <span>
+                            🕒
+                            ${escapeHTML(
+                                event.event_time ||
+                                '--:--'
+                            )}
+                        </span>
+
+                        <span>
+                            👥
+                            ${event.people_count ?? '-'}명
+                        </span>
+
+                        <span>
+                            벙주
+                            ${escapeHTML(
+                                event.host_name ||
+                                '-'
+                            )}
+                        </span>
+
+                    </div>
+                `;
+            })
+            .join('');
 }
-function getCategoryClass(category) {
-    if (category === '보겜') return 'category-bogem';
-    if (category === '머미') return 'category-meomi';
-    if (category === '협추') return 'category-hyeobchu';
-    return 'category-etc';
+
+
+
+/* ==================================================
+   09. 일정 입력창 공통 함수
+================================================== */
+
+/* 새 일정 */
+
+function openCreateEventModal(
+    dateString
+) {
+
+    editingEventId = null;
+
+    selectedDate = dateString;
+
+
+    eventModalTitle.textContent =
+        '일정 추가';
+
+    eventDate.value =
+        dateString;
+
+    selectedDateText.textContent =
+        `선택한 날짜: ${dateString}`;
+
+
+    eventTitle.value = '';
+    eventTime.value = '';
+    eventPeople.value = '';
+    eventHost.value = '';
+    eventDescription.value = '';
+
+    eventCategory.value =
+        '머미';
+
+    eventNomad.value =
+        '';
+
+
+    deleteEventButton.style.display =
+        'none';
+
+    eventModal.classList.remove(
+        'hidden'
+    );
 }
 
-function formatKoreanDate(dateString) {
-    const date = new Date(dateString);
 
-    const weekNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+/* 일정 수정 */
 
-    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${weekNames[date.getDay()]}`;
+function openEditEventModal(event) {
+
+    editingEventId =
+        event.id;
+
+    selectedDate =
+        event.start_date;
+
+
+    eventModalTitle.textContent =
+        '일정 수정';
+
+    eventDate.value =
+        event.start_date;
+
+    selectedDateText.textContent =
+        `선택한 날짜: ${event.start_date}`;
+
+
+    eventTitle.value =
+        event.title || '';
+
+    eventTime.value =
+        event.event_time || '';
+
+    eventPeople.value =
+        event.people_count ?? '';
+
+    eventHost.value =
+        event.host_name || '';
+
+    eventDescription.value =
+        event.description || '';
+
+    eventCategory.value =
+        event.category || '머미';
+
+    eventNomad.value =
+        (
+            event.ab_type === 'O' ||
+            event.ab_type === 'X'
+        )
+            ? event.ab_type
+            : '';
+
+
+    deleteEventButton.style.display =
+        'inline-block';
+
+    eventModal.classList.remove(
+        'hidden'
+    );
 }
-function formatICSDate(dateString, timeString) {
 
-    const time = timeString || '00:00';
 
-    const [year, month, day] =
-        dateString.split('-');
 
-    const [hour, minute] =
-        time.split(':');
+/* ==================================================
+   10. 달력 렌더링
+================================================== */
 
-    return `${year}${month}${day}T${hour}${minute}00`;
+function renderCalendar() {
+
+    calendarGrid.innerHTML = '';
+
+
+    const year =
+        currentDate.getFullYear();
+
+    const month =
+        currentDate.getMonth();
+
+
+    calendarTitle.textContent =
+        `${year}년 ${month + 1}월`;
+
+
+    const firstDay =
+        new Date(
+            year,
+            month,
+            1
+        ).getDay();
+
+    const lastDate =
+        new Date(
+            year,
+            month + 1,
+            0
+        ).getDate();
+
+
+    const totalCells =
+        Math.ceil(
+            (firstDay + lastDate) / 7
+        ) * 7;
+
+
+    const today =
+        new Date();
+
+
+    for (
+        let i = 0;
+        i < totalCells;
+        i++
+    ) {
+
+        const dayElement =
+            document.createElement('div');
+
+        dayElement.classList.add(
+            'day'
+        );
+
+
+        /* 이전 달 빈칸 */
+
+        if (i < firstDay) {
+
+            dayElement.classList.add(
+                'empty-day'
+            );
+
+            calendarGrid.appendChild(
+                dayElement
+            );
+
+            continue;
+        }
+
+
+        /* 다음 달 빈칸 */
+
+        if (
+            i >=
+            firstDay + lastDate
+        ) {
+
+            dayElement.classList.add(
+                'empty-day'
+            );
+
+            calendarGrid.appendChild(
+                dayElement
+            );
+
+            continue;
+        }
+
+
+        /* 현재 달 날짜 */
+
+        const displayDay =
+            i - firstDay + 1;
+
+        const dateString =
+            formatDate(
+                year,
+                month,
+                displayDay
+            );
+
+        dayElement.dataset.date =
+            dateString;
+
+
+        /* 주말 배경 */
+
+        const cellDate =
+            new Date(
+                year,
+                month,
+                displayDay
+            );
+
+        const dayOfWeek =
+            cellDate.getDay();
+
+
+        if (dayOfWeek === 0) {
+
+            dayElement.classList.add(
+                'sunday-cell'
+            );
+        }
+
+
+        if (dayOfWeek === 6) {
+
+            dayElement.classList.add(
+                'saturday-cell'
+            );
+        }
+
+
+        /* 오늘 표시 */
+
+        if (
+            year ===
+                today.getFullYear()
+            &&
+            month ===
+                today.getMonth()
+            &&
+            displayDay ===
+                today.getDate()
+        ) {
+
+            dayElement.classList.add(
+                'today'
+            );
+        }
+
+
+        /* 날짜 헤더 */
+
+        const dayHeader =
+            document.createElement(
+                'div'
+            );
+
+        dayHeader.classList.add(
+            'day-header'
+        );
+
+
+        const numberElement =
+            document.createElement(
+                'div'
+            );
+
+        numberElement.classList.add(
+            'day-number'
+        );
+
+        numberElement.textContent =
+            displayDay;
+
+
+        /* 유목민 여부
+           해당 날짜에 O 일정이 하나라도 있으면
+           우측 상단에 🏕️ 표시 */
+
+        const hasNomadEvent =
+            events
+                .filter(
+                    event =>
+                        event.start_date ===
+                        dateString
+                )
+                .some(
+                    event =>
+                        event.ab_type ===
+                        'O'
+                );
+
+
+        const nomadIndicator =
+            document.createElement(
+                'span'
+            );
+
+        nomadIndicator.classList.add(
+            'nomad-indicator'
+        );
+
+
+        if (hasNomadEvent) {
+
+            nomadIndicator.textContent =
+                '🏕️';
+        }
+
+
+        dayHeader.appendChild(
+            numberElement
+        );
+
+        dayHeader.appendChild(
+            nomadIndicator
+        );
+
+        dayElement.appendChild(
+            dayHeader
+        );
+
+
+        /* 관리자 날짜 클릭 */
+
+        dayElement.addEventListener(
+            'click',
+            () => {
+
+                if (!isAdmin) {
+                    return;
+                }
+
+                openCreateEventModal(
+                    dateString
+                );
+            }
+        );
+
+
+        /* 드래그 대상 날짜 */
+
+        dayElement.addEventListener(
+            'dragover',
+            event => {
+
+                if (!isAdmin) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                dayElement.classList.add(
+                    'drag-over'
+                );
+            }
+        );
+
+
+        dayElement.addEventListener(
+            'dragleave',
+            () => {
+
+                dayElement.classList.remove(
+                    'drag-over'
+                );
+            }
+        );
+
+
+        dayElement.addEventListener(
+            'drop',
+            async event => {
+
+                if (!isAdmin) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                dayElement.classList.remove(
+                    'drag-over'
+                );
+
+
+                const eventId =
+                    event.dataTransfer
+                        .getData(
+                            'text/plain'
+                        );
+
+
+                if (!eventId) {
+                    return;
+                }
+
+
+                const { error } =
+                    await supabaseClient
+                        .from('events')
+                        .update({
+                            start_date:
+                                dateString
+                        })
+                        .eq(
+                            'id',
+                            eventId
+                        );
+
+
+                if (error) {
+
+                    console.error(
+                        '일정 이동 실패:',
+                        error
+                    );
+
+                    alert(
+                        '일정 이동에 실패했습니다.'
+                    );
+
+                    return;
+                }
+
+
+                await loadEvents();
+            }
+        );
+
+
+        /* 해당 날짜 일정 */
+
+        const dayEvents =
+            events
+                .filter(event => {
+
+                    const sameDate =
+                        event.start_date ===
+                        dateString;
+
+                    const categoryMatches =
+                        selectedCategoryFilter ===
+                            '전체'
+                        ||
+                        event.category ===
+                            selectedCategoryFilter;
+
+                    return (
+                        sameDate &&
+                        categoryMatches
+                    );
+                })
+                .sort(
+                    (a, b) => {
+
+                        const timeA =
+                            a.event_time ||
+                            '99:99';
+
+                        const timeB =
+                            b.event_time ||
+                            '99:99';
+
+                        return (
+                            timeA.localeCompare(
+                                timeB
+                            )
+                        );
+                    }
+                );
+
+
+        /* 일정 카드 */
+
+        dayEvents.forEach(event => {
+
+            const eventElement =
+                document.createElement(
+                    'div'
+                );
+
+
+            eventElement.classList.add(
+                'event',
+                getCategoryClass(
+                    event.category
+                )
+            );
+
+
+            eventElement.draggable =
+                isAdmin;
+
+            eventElement.dataset.eventId =
+                event.id;
+
+
+            eventElement.innerHTML = `
+                <div class="event-time">
+                    ${escapeHTML(
+                        event.event_time ||
+                        '--:--'
+                    )}
+                </div>
+
+                <div class="event-title">
+                    ${escapeHTML(
+                        event.title || ''
+                    )}
+                </div>
+
+                <div class="event-meta">
+
+                    <span>
+                        ${event.people_count ?? '-'}명
+                    </span>
+
+                    <span>
+                        벙주
+                        ${escapeHTML(
+                            event.host_name ||
+                            '-'
+                        )}
+                    </span>
+
+                </div>
+            `;
+
+
+            /* 드래그 */
+
+            eventElement.addEventListener(
+                'dragstart',
+                dragEvent => {
+
+                    if (!isAdmin) {
+
+                        dragEvent
+                            .preventDefault();
+
+                        return;
+                    }
+
+
+                    dragEvent
+                        .dataTransfer
+                        .setData(
+                            'text/plain',
+                            event.id
+                        );
+
+                    dragEvent
+                        .dataTransfer
+                        .effectAllowed =
+                            'move';
+
+
+                    eventElement
+                        .classList
+                        .add(
+                            'dragging'
+                        );
+                }
+            );
+
+
+            eventElement.addEventListener(
+                'dragend',
+                () => {
+
+                    eventElement
+                        .classList
+                        .remove(
+                            'dragging'
+                        );
+                }
+            );
+
+
+            /* 상세보기 */
+
+            eventElement.addEventListener(
+                'click',
+                clickEvent => {
+
+                    clickEvent
+                        .stopPropagation();
+
+
+                    selectedDetailEvent =
+                        event;
+
+
+                    detailCategoryBadge
+                        .textContent =
+                            event.category ||
+                            '기타';
+
+                    detailCategoryBadge
+                        .className =
+                            `detail-category-badge ${getCategoryClass(event.category)}`;
+
+
+                    detailTitle.textContent =
+                        event.title || '';
+
+                    detailDate.textContent =
+                        formatKoreanDate(
+                            event.start_date
+                        );
+
+                    detailTime.textContent =
+                        event.event_time ||
+                        '-';
+
+                    detailPeople.textContent =
+                        `${event.people_count ?? '-'}명`;
+
+                    detailHost.textContent =
+                        event.host_name ||
+                        '-';
+
+                    detailDescription
+                        .textContent =
+                            event.description ||
+                            '-';
+
+
+                    editFromDetailButton
+                        .style.display =
+                            isAdmin
+                                ? 'inline-block'
+                                : 'none';
+
+
+                    editFromDetailButton
+                        .onclick =
+                            () => {
+
+                                detailModal
+                                    .classList
+                                    .add(
+                                        'hidden'
+                                    );
+
+                                openEditEventModal(
+                                    event
+                                );
+                            };
+
+
+                    detailModal.classList.remove(
+                        'hidden'
+                    );
+                }
+            );
+
+
+            dayElement.appendChild(
+                eventElement
+            );
+        });
+
+
+        calendarGrid.appendChild(
+            dayElement
+        );
+    }
 }
 
+
+
+/* ==================================================
+   11. 달력 이동 / 카테고리 필터
+================================================== */
+
+/* 이전 달 */
+
+prevMonthButton.addEventListener(
+    'click',
+    () => {
+
+        currentDate.setMonth(
+            currentDate.getMonth() - 1
+        );
+
+        renderCalendar();
+    }
+);
+
+
+/* 다음 달 */
+
+nextMonthButton.addEventListener(
+    'click',
+    () => {
+
+        currentDate.setMonth(
+            currentDate.getMonth() + 1
+        );
+
+        renderCalendar();
+    }
+);
+
+
+/* 오늘 */
+
+todayButton.addEventListener(
+    'click',
+    () => {
+
+        currentDate =
+            new Date();
+
+        renderCalendar();
+    }
+);
+
+
+/* 카테고리 필터 */
+
+filterButtons.forEach(button => {
+
+    button.addEventListener(
+        'click',
+        () => {
+
+            selectedCategoryFilter =
+                button.dataset.category;
+
+
+            filterButtons.forEach(
+                filterButton => {
+
+                    filterButton
+                        .classList
+                        .remove(
+                            'active'
+                        );
+                }
+            );
+
+
+            button.classList.add(
+                'active'
+            );
+
+
+            renderCalendar();
+        }
+    );
+});
+
+
+
+/* ==================================================
+   12. 빠른 일정 추가
+================================================== */
+
+quickAddEventButton.addEventListener(
+    'click',
+    () => {
+
+        if (!isAdmin) {
+            return;
+        }
+
+
+        const today =
+            new Date();
+
+
+        const todayString =
+            formatDate(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate()
+            );
+
+
+        openCreateEventModal(
+            todayString
+        );
+    }
+);
+
+
+
+/* ==================================================
+   13. 일정 추가 / 수정 / 삭제
+================================================== */
+
+/* 날짜 직접 변경 */
+
+eventDate.addEventListener(
+    'change',
+    () => {
+
+        selectedDate =
+            eventDate.value;
+
+        selectedDateText.textContent =
+            selectedDate
+                ? `선택한 날짜: ${selectedDate}`
+                : '';
+    }
+);
+
+
+/* 취소 */
+
+cancelEventButton.addEventListener(
+    'click',
+    () => {
+
+        eventModal.classList.add(
+            'hidden'
+        );
+
+        editingEventId = null;
+    }
+);
+
+
+/* 저장 */
+
+saveEventButton.addEventListener(
+    'click',
+    async () => {
+
+        if (!isAdmin) {
+
+            alert(
+                '관리자만 일정을 저장할 수 있습니다.'
+            );
+
+            return;
+        }
+
+
+        selectedDate =
+            eventDate.value;
+
+
+        if (!selectedDate) {
+
+            alert(
+                '날짜를 선택하세요.'
+            );
+
+            return;
+        }
+
+
+        const title =
+            eventTitle.value.trim();
+
+
+        if (!title) {
+
+            alert(
+                '일정 제목을 입력하세요.'
+            );
+
+            return;
+        }
+
+
+        if (!eventNomad.value) {
+
+            alert(
+                '유목민 여부를 선택하세요.'
+            );
+
+            return;
+        }
+
+
+        const eventData = {
+
+            title,
+
+            description:
+                eventDescription
+                    .value
+                    .trim(),
+
+            start_date:
+                selectedDate,
+
+            category:
+                eventCategory.value,
+
+            event_time:
+                eventTime
+                    .value
+                    .trim(),
+
+            people_count:
+                eventPeople.value
+                    ? parseInt(
+                        eventPeople.value,
+                        10
+                    )
+                    : null,
+
+            host_name:
+                eventHost
+                    .value
+                    .trim(),
+
+            /*
+               DB의 기존 ab_type 컬럼을
+               유목민 O/X 값 저장용으로 재사용
+            */
+            ab_type:
+                eventNomad.value
+        };
+
+
+        let error;
+
+
+        /* 수정 */
+
+        if (editingEventId) {
+
+            const result =
+                await supabaseClient
+                    .from('events')
+                    .update(eventData)
+                    .eq(
+                        'id',
+                        editingEventId
+                    );
+
+            error =
+                result.error;
+
+        }
+
+        /* 새 일정 */
+
+        else {
+
+            const result =
+                await supabaseClient
+                    .from('events')
+                    .insert(
+                        eventData
+                    );
+
+            error =
+                result.error;
+        }
+
+
+        if (error) {
+
+            console.error(
+                '일정 저장 실패:',
+                error
+            );
+
+            alert(
+                '일정 저장에 실패했습니다.'
+            );
+
+            return;
+        }
+
+
+        eventModal.classList.add(
+            'hidden'
+        );
+
+        editingEventId = null;
+
+
+        await loadEvents();
+    }
+);
+
+
+/* 삭제 */
+
+deleteEventButton.addEventListener(
+    'click',
+    async () => {
+
+        if (!isAdmin) {
+
+            alert(
+                '관리자 권한이 없습니다.'
+            );
+
+            return;
+        }
+
+
+        if (!editingEventId) {
+
+            alert(
+                '삭제할 일정 ID를 찾지 못했습니다.'
+            );
+
+            return;
+        }
+
+
+        const confirmed =
+            confirm(
+                '이 일정을 삭제할까요?'
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from('events')
+                .delete()
+                .eq(
+                    'id',
+                    editingEventId
+                )
+                .select();
+
+
+        if (error) {
+
+            console.error(
+                '일정 삭제 실패:',
+                error
+            );
+
+            alert(
+                '일정 삭제에 실패했습니다.'
+            );
+
+            return;
+        }
+
+
+        if (
+            !data ||
+            data.length === 0
+        ) {
+
+            alert(
+                '삭제 권한 또는 RLS 정책을 확인해야 합니다.'
+            );
+
+            return;
+        }
+
+
+        eventModal.classList.add(
+            'hidden'
+        );
+
+        editingEventId = null;
+
+
+        await loadEvents();
+    }
+);
+
+
+
+/* ==================================================
+   14. 상세보기 닫기
+================================================== */
+
+closeDetailModalButton.addEventListener(
+    'click',
+    () => {
+
+        detailModal.classList.add(
+            'hidden'
+        );
+
+        selectedDetailEvent =
+            null;
+    }
+);
+
+
+
+/* ==================================================
+   15. 외부 캘린더 저장 (.ics)
+================================================== */
+
+/* ICS 문자열 안전 처리 */
 
 function escapeICS(text) {
 
-    if (!text) return '';
+    if (!text) {
+        return '';
+    }
 
     return String(text)
         .replace(/\\/g, '\\\\')
-        .replace(/\n/g, '\\n')
+        .replace(/\r?\n/g, '\\n')
         .replace(/,/g, '\\,')
         .replace(/;/g, '\\;');
 }
 
 
+/* 날짜만 ICS 형식 */
+
+function formatICSDateOnly(
+    dateString
+) {
+
+    return dateString
+        .replace(/-/g, '');
+}
+
+
+/* 날짜 + 시간 ICS 형식 */
+
+function formatICSDateTime(
+    dateString,
+    timeString
+) {
+
+    return (
+        formatICSDateOnly(
+            dateString
+        )
+        +
+        'T'
+        +
+        timeString.replace(
+            ':',
+            ''
+        )
+        +
+        '00'
+    );
+}
+
+
+/* 다음 날짜 */
+
+function getNextDateString(
+    dateString
+) {
+
+    const date =
+        parseLocalDate(
+            dateString
+        );
+
+    date.setDate(
+        date.getDate() + 1
+    );
+
+    return formatDate(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+    );
+}
+
+
+/* ICS 다운로드 */
+
 function downloadICS(event) {
 
-    const startDate =
-        formatICSDate(
-            event.start_date,
-            event.event_time
-        );
-
-    /*
-       종료시간 정보가 따로 없으므로
-       일단 시작시간 기준 1시간 일정으로 생성
-    */
-
-    const start =
-        new Date(
-            `${event.start_date}T${event.event_time || '00:00'}:00`
-        );
-
-    const end =
-        new Date(start.getTime() + 60 * 60 * 1000);
-
-    const endYear =
-        end.getFullYear();
-
-    const endMonth =
-        String(end.getMonth() + 1).padStart(2, '0');
-
-    const endDay =
-        String(end.getDate()).padStart(2, '0');
-
-    const endHour =
-        String(end.getHours()).padStart(2, '0');
-
-    const endMinute =
-        String(end.getMinutes()).padStart(2, '0');
-
-    const endDate =
-        `${endYear}${endMonth}${endDay}T${endHour}${endMinute}00`;
+    if (!event) {
+        return;
+    }
 
 
     const descriptionParts = [];
 
+
     if (event.category) {
+
         descriptionParts.push(
             `카테고리: ${event.category}`
         );
     }
 
-    if (event.ab_type) {
-        descriptionParts.push(
-            `구분: ${event.ab_type}`
-        );
-    }
 
     if (event.people_count) {
+
         descriptionParts.push(
             `인원: ${event.people_count}명`
         );
     }
 
+
     if (event.host_name) {
+
         descriptionParts.push(
             `벙주: ${event.host_name}`
         );
     }
 
+
     if (event.description) {
+
         descriptionParts.push(
             event.description
         );
@@ -416,670 +1950,221 @@ function downloadICS(event) {
 
 
     const description =
-        descriptionParts.join('\n');
+        descriptionParts.join(
+            '\n'
+        );
 
 
-    const icsContent = [
+    const lines = [
+
         'BEGIN:VCALENDAR',
+
         'VERSION:2.0',
-        'PRODID:-//My Calendar//KR//',
+
+        'PRODID:-//Workshop Calendar//KR//',
+
         'CALSCALE:GREGORIAN',
+
         'METHOD:PUBLISH',
 
         'BEGIN:VEVENT',
 
-        `UID:${event.id}@mycalendar`,
+        `UID:${event.id}@workshop-calendar`,
 
-        `DTSTART:${startDate}`,
-        `DTEND:${endDate}`,
+        `SUMMARY:${escapeICS(
+            event.title || '일정'
+        )}`,
 
-        `SUMMARY:${escapeICS(event.title)}`,
+        `DESCRIPTION:${escapeICS(
+            description
+        )}`
+    ];
 
-        `DESCRIPTION:${escapeICS(description)}`,
 
+    /*
+       시간이 있는 일정:
+       시작 시간부터 1시간 일정으로 저장
+    */
+
+    if (event.event_time) {
+
+        const startDateTime =
+            formatICSDateTime(
+                event.start_date,
+                event.event_time
+            );
+
+
+        const startDate =
+            new Date(
+                `${event.start_date}T${event.event_time}:00`
+            );
+
+
+        const endDate =
+            new Date(
+                startDate.getTime()
+                +
+                60 * 60 * 1000
+            );
+
+
+        const endDateString =
+            formatDate(
+                endDate.getFullYear(),
+                endDate.getMonth(),
+                endDate.getDate()
+            );
+
+
+        const endTimeString =
+            `${String(
+                endDate.getHours()
+            ).padStart(2, '0')}:${String(
+                endDate.getMinutes()
+            ).padStart(2, '0')}`;
+
+
+        lines.push(
+            `DTSTART:${startDateTime}`
+        );
+
+        lines.push(
+            `DTEND:${formatICSDateTime(
+                endDateString,
+                endTimeString
+            )}`
+        );
+    }
+
+
+    /*
+       시간이 없는 일정:
+       하루 종일 일정으로 저장
+    */
+
+    else {
+
+        lines.push(
+            `DTSTART;VALUE=DATE:${formatICSDateOnly(
+                event.start_date
+            )}`
+        );
+
+        lines.push(
+            `DTEND;VALUE=DATE:${formatICSDateOnly(
+                getNextDateString(
+                    event.start_date
+                )
+            )}`
+        );
+    }
+
+
+    lines.push(
         'END:VEVENT',
         'END:VCALENDAR'
-    ].join('\r\n');
+    );
+
+
+    const icsContent =
+        lines.join('\r\n');
 
 
     const blob =
         new Blob(
             [icsContent],
             {
-                type: 'text/calendar;charset=utf-8'
+                type:
+                    'text/calendar;charset=utf-8'
             }
         );
 
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
 
     const link =
-        document.createElement('a');
+        document.createElement(
+            'a'
+        );
 
-    link.href = url;
+
+    const safeFileName =
+        String(
+            event.title ||
+            '일정'
+        )
+            .replace(
+                /[\\/:*?"<>|]/g,
+                '_'
+            );
+
+
+    link.href =
+        url;
 
     link.download =
-        `${event.title || '일정'}.ics`;
+        `${safeFileName}.ics`;
 
-    document.body.appendChild(link);
+
+    document.body.appendChild(
+        link
+    );
 
     link.click();
 
-    document.body.removeChild(link);
+    link.remove();
 
-    URL.revokeObjectURL(url);
-}
 
-function renderTodaySummary() {
-    const today = new Date();
-
-    const todayString = formatDate(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
+    setTimeout(
+        () => {
+            URL.revokeObjectURL(
+                url
+            );
+        },
+        1000
     );
-
-    const todayEvents = events
-        .filter(event => event.start_date === todayString)
-        .sort((a, b) => (a.event_time || '').localeCompare(b.event_time || ''));
-
-    todayDateLabel.textContent = formatKoreanDate(todayString);
-    todayCountBadge.textContent = `${todayEvents.length}건`;
-    const todaySummaryCard = document.querySelector('.today-summary-card');
-
-if (todayEvents.length === 0) {
-    todaySummaryCard.classList.add('no-events');
-} else {
-    todaySummaryCard.classList.remove('no-events');
 }
 
-    if (todayEvents.length === 0) {
-        todaySummaryList.textContent = '오늘 일정이 없습니다.';
-        return;
-    }
 
-    todaySummaryList.innerHTML = todayEvents.map(event => {
-        return `
-            <div class="today-summary-item">
-                <strong>${event.category || '기타'}</strong>
-                <span>${event.title || ''}</span>
-                <span>🕒 ${event.event_time || '--:--'}</span>
-                <span>👥 ${event.people_count ?? '-'}명</span>
-                <span>벙주 ${event.host_name || '-'}</span>
-            </div>
-        `;
-    }).join('');
-}
-/* =========================
-   달력 그리기
-========================= */
+/* 캘린더에 저장 버튼 */
 
-function renderCalendar() {
-    calendarGrid.innerHTML = '';
+addToCalendarButton.addEventListener(
+    'click',
+    () => {
 
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+        if (!selectedDetailEvent) {
 
-    calendarTitle.textContent = `${year}년 ${month + 1}월`;
+            alert(
+                '일정 정보를 찾을 수 없습니다.'
+            );
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const lastDate = new Date(year, month + 1, 0).getDate();
-
-    const today = new Date();
-
-const totalCells =
-    Math.ceil((firstDay + lastDate) / 7) * 7;
-
-    for (let i = 0; i < totalCells; i++) {
-        const dayElement = document.createElement('div');
-
-        dayElement.classList.add('day');
-
-        let displayDay;
-        let cellYear = year;
-        let cellMonth = month;
-
-        /* 이전 달 */
-
-if (i < firstDay) {
-
-    dayElement.classList.add('empty-day');
-
-    calendarGrid.appendChild(dayElement);
-
-    continue;
-}
-
-        /* 이번 달 */
-
-        else if (i < firstDay + lastDate) {
-            displayDay = i - firstDay + 1;
+            return;
         }
 
-        /* 다음 달 */
 
-else {
-
-    dayElement.classList.add('empty-day');
-
-    calendarGrid.appendChild(dayElement);
-
-    continue;
-}
-
-        const dateString = formatDate(
-            cellYear,
-            cellMonth,
-            displayDay
+        downloadICS(
+            selectedDetailEvent
         );
-const cellDate = new Date(
-    cellYear,
-    cellMonth,
-    displayDay
+    }
 );
 
-const dayOfWeek = cellDate.getDay();
 
-if (dayOfWeek === 0) {
-    dayElement.classList.add('sunday-cell');
-}
 
-if (dayOfWeek === 6) {
-    dayElement.classList.add('saturday-cell');
-}
-        dayElement.dataset.date = dateString;
-dayElement.addEventListener('dragover', (e) => {
-    if (!isAdmin) {
-        return;
-    }
-
-    e.preventDefault();
-
-    dayElement.classList.add('drag-over');
-});
-dayElement.addEventListener('dragleave', () => {
-    dayElement.classList.remove('drag-over');
-});
-        dayElement.addEventListener('drop', async (e) => {
-    if (!isAdmin) {
-        return;
-    }
-
-    e.preventDefault();
-
-    dayElement.classList.remove('drag-over');
-
-    const eventId = e.dataTransfer.getData('text/plain');
-
-    if (!eventId) {
-        return;
-    }
-
-    const { error } = await supabaseClient
-        .from('events')
-        .update({
-            start_date: dateString
-        })
-        .eq('id', eventId);
-
-    if (error) {
-        console.error('일정 이동 실패:', error);
-        alert('일정 이동에 실패했습니다.');
-        return;
-    }
-
-    await loadEvents();
-});
-        /* =========================
-           관리자 날짜 클릭
-        ========================= */
-
-dayElement.addEventListener('click', () => {
-    if (!isAdmin) {
-        return;
-    }
-
-    editingEventId = null;
-    selectedDate = dateString;
-    
-    eventDate.value = dateString;
-
-    eventModalTitle.textContent = '일정 추가';
-
-    selectedDateText.textContent =
-        `선택한 날짜: ${selectedDate}`;
-
-    eventTitle.value = '';
-    eventDescription.value = '';
-    eventCategory.value = '머미';
-    eventTime.value = '';
-    eventPeople.value = '';
-    eventHost.value = '';
-    eventABType.value = '';
-    
-    deleteEventButton.style.display = 'none';
-
-    eventModal.classList.remove('hidden');
-});
-
-
-        /* 오늘 표시 */
-
-        if (
-            cellYear === today.getFullYear()
-            &&
-            cellMonth === today.getMonth()
-            &&
-            displayDay === today.getDate()
-        ) {
-            dayElement.classList.add('today');
-        }
-
-
-        /* 날짜 숫자 */
-const dayHeaderElement = document.createElement('div');
-dayHeaderElement.classList.add('day-header');
-
-const numberElement = document.createElement('div');
-numberElement.classList.add('day-number');
-numberElement.textContent = displayDay;
-
-const statusEvents = events.filter(
-    event => event.start_date === dateString
-);
-
-const hasNomadEvent = statusEvents.some(
-    event => event.ab_type === 'O'
-);
-
-const nomadIndicator = document.createElement('span');
-nomadIndicator.classList.add('nomad-indicator');
-
-if (hasNomadEvent) {
-    nomadIndicator.textContent = '🏕️';
-}
-
-dayHeaderElement.appendChild(numberElement);
-dayHeaderElement.appendChild(nomadIndicator);
-
-
-dayElement.appendChild(dayHeaderElement);
-        
-const holidayName = koreanHolidays[dateString];
-
-if (holidayName) {
-
-    dayElement.classList.add('holiday-cell');
-
-    numberElement.classList.add('holiday-number');
-
-    const holidayElement =
-        document.createElement('div');
-
-    holidayElement.classList.add('holiday-name');
-
-    holidayElement.textContent =
-        holidayName;
-
-    dayElement.appendChild(holidayElement);
-}
-
-        /* 일정 표시 */
-
-const dayEvents = events
-    .filter(event => {
-        const sameDate =
-            event.start_date === dateString;
-
-        const categoryMatches =
-            selectedCategoryFilter === '전체'
-            || event.category === selectedCategoryFilter;
-
-        return sameDate && categoryMatches;
-    })
-    .sort((a, b) => {
-        const timeA = a.event_time || '99:99';
-        const timeB = b.event_time || '99:99';
-
-        return timeA.localeCompare(timeB);
-    });
-
-        dayEvents.forEach(event => {
-    const eventElement = document.createElement('div');
-
-    eventElement.classList.add('event');
-    eventElement.classList.add(getCategoryClass(event.category));
-            
-eventElement.draggable = isAdmin;
-eventElement.dataset.eventId = event.id;
-            eventElement.addEventListener('dragstart', (e) => {
-    if (!isAdmin) {
-        e.preventDefault();
-        return;
-    }
-
-    e.dataTransfer.setData('text/plain', event.id);
-    e.dataTransfer.effectAllowed = 'move';
-
-    eventElement.classList.add('dragging');
-});
-       eventElement.addEventListener('dragend', () => {
-    eventElement.classList.remove('dragging');
-});
-            
-eventElement.innerHTML = `
-    <div class="event-time">
-        ${event.event_time || '--:--'}
-    </div>
-
-    <div class="event-title">
-        ${event.title || ''}
-    </div>
-
-    <div class="event-meta">
-        <span>${event.people_count ?? '-'}명</span>
-        <span>벙주 ${event.host_name || '-'}</span>
-    </div>
-`;
-
-    eventElement.addEventListener('click', (e) => {
-        e.stopPropagation();
-editingEventId = event.id;
-        selectedDetailEvent = event;
-        
-        detailCategoryBadge.textContent = event.category || '기타';
-        detailCategoryBadge.className = `detail-category-badge ${getCategoryClass(event.category)}`;
-
-        detailTitle.textContent = event.title || '';
-        detailDate.textContent = formatKoreanDate(event.start_date);
-        detailTime.textContent = event.event_time || '-';
-        detailPeople.textContent = `${event.people_count ?? '-'}명`;
-        detailHost.textContent = event.host_name || '-';
-        detailDescription.textContent = event.description || '-';
-
-        if (isAdmin) {
-            editFromDetailButton.style.display = 'inline-block';
-        } else {
-            editFromDetailButton.style.display = 'none';
-        }
-
-        editFromDetailButton.onclick = () => {
-            detailModal.classList.add('hidden');
-
-            editingEventId = event.id;
-            selectedDate = event.start_date;
-            
-            eventDate.value = event.start_date;
-            
-            eventModalTitle.textContent = '일정 수정';
-            selectedDateText.textContent = `선택한 날짜: ${selectedDate}`;
-
-            eventTitle.value = event.title || '';
-            eventTime.value = event.event_time || '';
-            eventPeople.value = event.people_count ?? '';
-            eventHost.value = event.host_name || '';
-            eventDescription.value = event.description || '';
-            eventCategory.value = event.category || '머미';
-            eventABType.value = event.ab_type || '';
-            
-            deleteEventButton.style.display = 'inline-block';
-            eventModal.classList.remove('hidden');
-        };
-
-        detailModal.classList.remove('hidden');
-    });
-
-    dayElement.appendChild(eventElement);
-});
-
-        calendarGrid.appendChild(dayElement);
-    }
-}
-
-
-/* =========================
-   이전 달
-========================= */
-
-prevMonthButton.addEventListener('click', () => {
-    currentDate.setMonth(
-        currentDate.getMonth() - 1
-    );
-
-    renderCalendar();
-});
-
-
-/* =========================
-   다음 달
-========================= */
-
-nextMonthButton.addEventListener('click', () => {
-    currentDate.setMonth(
-        currentDate.getMonth() + 1
-    );
-
-    renderCalendar();
-});
-
-
-/* =========================
-   오늘
-========================= */
-
-todayButton.addEventListener('click', () => {
-    currentDate = new Date();
-
-    renderCalendar();
-});
-
-quickAddEventButton.addEventListener('click', () => {
-
-    if (!isAdmin) {
-        return;
-    }
-
-    editingEventId = null;
-
-    const today = new Date();
-
-    selectedDate = formatDate(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
-    );
-
-    eventModalTitle.textContent = '일정 추가';
-
-    eventDate.value = selectedDate;
-
-    selectedDateText.textContent =
-        `선택한 날짜: ${selectedDate}`;
-
-    eventTitle.value = '';
-    eventDescription.value = '';
-    eventCategory.value = '머미';
-
-    eventTime.value = '';
-    eventPeople.value = '';
-    eventHost.value = '';
-
-    eventABType.value = '';
-
-    deleteEventButton.style.display = 'none';
-
-    eventModal.classList.remove('hidden');
-});
-
-eventDate.addEventListener('change', () => {
-
-    selectedDate = eventDate.value;
-
-    selectedDateText.textContent =
-        `선택한 날짜: ${selectedDate}`;
-});
-
-filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        selectedCategoryFilter = button.dataset.category;
-
-        filterButtons.forEach(btn => {
-            btn.classList.remove('active');
-        });
-
-        button.classList.add('active');
-
-        renderCalendar();
-    });
-});
-
-/* =========================
-   일정 추가 취소
-========================= */
-
-cancelEventButton.addEventListener('click', () => {
-    eventModal.classList.add('hidden');
-    editingEventId = null;
-});
-closeDetailModalButton.addEventListener('click', () => {
-    detailModal.classList.add('hidden');
-});
-
-addToCalendarButton.addEventListener('click', () => {
-
-    if (!selectedDetailEvent) {
-        alert('일정 정보를 찾을 수 없습니다.');
-        return;
-    }
-
-    downloadICS(selectedDetailEvent);
-});
-
-/* =========================
-   일정 저장
-========================= */
-
-saveEventButton.addEventListener('click', async () => {
-    if (!isAdmin) {
-        alert('관리자만 일정을 저장할 수 있습니다.');
-        return;
-    }
-console.log('현재 editingEventId:', editingEventId);
-    selectedDate = eventDate.value;
-
-if (!selectedDate) {
-    alert('날짜를 선택하세요.');
-    return;
-}
-    const title = eventTitle.value.trim();
-
-    if (!title) {
-        alert('일정 제목을 입력하세요.');
-        return;
-    }
-    
-if (!eventABType.value) {
-    alert('유목민 여부를 선택하세요.');
-    return;
-}
-    
-    const eventData = {
-        title: title,
-        description: eventDescription.value.trim(),
-        start_date: selectedDate,
-        category: eventCategory.value,
-        event_time: eventTime.value.trim(),
-        people_count: eventPeople.value
-            ? parseInt(eventPeople.value, 10)
-            : null,
-        host_name: eventHost.value.trim(),
-        ab_type: eventABType.value
-    };
-
-    let error;
-
-    if (editingEventId !== null) {
-        const result = await supabaseClient
-            .from('events')
-            .update(eventData)
-            .eq('id', editingEventId);
-
-        error = result.error;
-    } else {
-        const result = await supabaseClient
-            .from('events')
-            .insert(eventData);
-
-        error = result.error;
-    }
-
-    if (error) {
-        console.error('일정 저장 실패:', error);
-        alert('일정 저장에 실패했습니다.');
-        return;
-    }
-
-    eventModal.classList.add('hidden');
-
-    editingEventId = null;
-
-    await loadEvents();
-});
-
-deleteEventButton.addEventListener('click', async () => {
-    if (!isAdmin) {
-        alert('관리자 권한이 없습니다.');
-        return;
-    }
-
-    if (!editingEventId) {
-        alert('삭제할 일정 ID를 찾지 못했습니다.');
-        return;
-    }
-
-    const confirmed = confirm('이 일정을 삭제할까요?');
-
-    if (!confirmed) {
-        return;
-    }
-
-    console.log('삭제할 일정 ID:', editingEventId);
-
-    const { data, error } = await supabaseClient
-        .from('events')
-        .delete()
-        .eq('id', editingEventId)
-        .select();
-
-    if (error) {
-        console.error('일정 삭제 실패:', error);
-        alert('일정 삭제에 실패했습니다.');
-        return;
-    }
-
-    console.log('삭제 결과:', data);
-
-    if (!data || data.length === 0) {
-        alert('삭제 권한 또는 RLS 정책을 확인해야 합니다.');
-        return;
-    }
-
-    eventModal.classList.add('hidden');
-
-    editingEventId = null;
-
-    await loadEvents();
-});
-
-/* =========================
-   시작
-========================= */
+/* ==================================================
+   16. 시작
+================================================== */
 
 async function init() {
+
     await checkLogin();
+
     await loadEvents();
 }
+
 
 init();
