@@ -2860,9 +2860,11 @@ async function init() {
         );
 
 
-    await loadMonthlySettlement();
-
-    await loadDailySettlement();
+await Promise.all([
+    loadMonthlySettlement(),
+    loadDailySettlement()
+]);
+   
 }
 
 
