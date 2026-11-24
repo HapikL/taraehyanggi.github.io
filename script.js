@@ -40,6 +40,11 @@ const todayButton =
 
 /* 로그인 */
 
+const settlementButton =
+    document.getElementById(
+        'settlementButton'
+    );
+
 const loginButton =
     document.getElementById('loginButton');
 
