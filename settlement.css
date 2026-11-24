@@ -525,16 +525,16 @@ button {
     display: grid;
 
     grid-template-columns:
-        150px
-        80px
-        105px
-        minmax(180px, 0.7fr)
-        90px
-        75px
-        120px
-        125px
-        70px;
-
+    150px
+    80px
+    105px
+    520px
+    90px
+    75px
+    120px
+    125px
+    70px;
+   
     align-items: center;
 
     min-height: 53px;
