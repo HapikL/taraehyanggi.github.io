@@ -843,9 +843,10 @@ button {
 
 grid-template-columns:
     minmax(180px, 1fr)
+    190px
+    95px
+    145px
     150px
-    115px
-    120px
     115px;
 
     align-items: center;
@@ -930,7 +931,86 @@ grid-template-columns:
 
     font-size: 10px;
 }
+/* 제외 사유 태그 */
 
+.exclude-tags {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 5px;
+}
+
+.exclude-tag-button {
+    padding: 5px 8px;
+
+    border: 1px solid #d1dbe6;
+    border-radius: 999px;
+
+    background: #f5f7fa;
+    color: #728397;
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.exclude-tag-button:hover {
+    background: #edf3fa;
+}
+
+.exclude-tag-button.active {
+    border-color: #799bc7;
+
+    background: #e3edf9;
+    color: #315f96;
+}
+
+
+/* 금액 영역 */
+
+.daily-price-area {
+    min-width: 0;
+}
+
+.daily-event-amount {
+    font-weight: 800;
+}
+
+
+/* 머미 추가 비용 */
+
+.meomi-cost-control {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 5px;
+}
+
+.meomi-cost-control span {
+    flex-shrink: 0;
+
+    color: #8b6d5c;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.meomi-cost-input {
+    width: 82px;
+
+    padding: 4px 6px;
+
+    border: 1px solid #ddc9bc;
+    border-radius: 6px;
+
+    background: #fff9f5;
+
+    color: #784d36;
+
+    font-size: 10px;
+    font-weight: 700;
+}
 /* ==================================================
    17. 주차 행
 ================================================== */
