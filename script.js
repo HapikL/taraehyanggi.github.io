@@ -761,8 +761,8 @@ function openCreateEventModal(
     eventCategory.value =
         '머미';
 
-    eventNomad.value =
-        '';
+eventNomad.value =
+    'X';
 
 
     deleteEventButton.style.display =
@@ -1608,17 +1608,6 @@ saveEventButton.addEventListener(
             return;
         }
 
-
-        if (!eventNomad.value) {
-
-            alert(
-                '유목민 여부를 선택하세요.'
-            );
-
-            return;
-        }
-
-
         const eventData = {
 
             title,
@@ -1656,8 +1645,8 @@ saveEventButton.addEventListener(
                DB의 기존 ab_type 컬럼을
                유목민 O/X 값 저장용으로 재사용
             */
-            ab_type:
-                eventNomad.value
+     ab_type:
+    eventNomad.value || 'X',
         };
 
 
