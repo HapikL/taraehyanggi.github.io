@@ -501,20 +501,25 @@ headerLogoutButton.addEventListener(
 );
 
 
-
 /* ==================================================
    14. 이용료 계산
 ================================================== */
 
 /*
+   공방 이용료
+
    평일:
    1명당 10,000원
 
    토 / 일:
    1명당 12,000원
 
-   머미:
-   기본 이용료 + 별도 머미 비용
+
+   머미 일정
+
+   머미 1인당 비용
+   ×
+   실제 정산 인원
 */
 
 function getEventPrice(
@@ -566,16 +571,16 @@ function getEventPrice(
         );
 
 
+    /* 공방 기본 이용료 */
+
     const baseTotal =
         chargedPeople *
         pricePerPerson;
 
 
-    /*
-       머미 일정만 추가 비용 적용
-    */
+    /* 머미 1인당 비용 */
 
-    const meomiCost =
+    const meomiPricePerPerson =
         event.category === '머미'
             ? Math.max(
                 0,
@@ -584,6 +589,20 @@ function getEventPrice(
                 ) || 0
             )
             : 0;
+
+
+    /* 머미 비용 총액 */
+
+    const meomiTotal =
+        chargedPeople *
+        meomiPricePerPerson;
+
+
+    /* 최종 이용료 */
+
+    const total =
+        baseTotal +
+        meomiTotal;
 
 
     return {
@@ -598,13 +617,14 @@ function getEventPrice(
 
         baseTotal,
 
-        meomiCost,
+        meomiPricePerPerson,
 
-        total:
-            baseTotal +
-            meomiCost
+        meomiTotal,
+
+        total
     };
 }
+
 /* ==================================================
    15. 월 시작 / 마지막 날짜
 ================================================== */
@@ -1589,37 +1609,85 @@ const price =
     <!-- 금액 -->
 
     <div class="daily-price-area">
+    
+<div class="daily-event-amount">
 
-        <div class="daily-event-amount">
+    <strong>
+        ${formatMoney(
+            price.total
+        )}
+    </strong>
 
-            ${formatMoney(
-                price.total
-            )}
+    ${
+        event.category === '머미'
+            ? `
+                <div class="daily-event-meta">
 
-        </div>
+                    공방
+                    ${formatMoney(
+                        price.baseTotal
+                    )}
+
+                    +
+
+                    머미
+                    ${formatMoney(
+                        price.meomiTotal
+                    )}
+
+                </div>
+            `
+            : ''
+    }
+
+</div>
 
 
         ${
-            event.category === '머미'
-                ? `
-                    <div class="meomi-cost-control">
+    event.category === '머미'
+        ? `
+            <div class="meomi-cost-control">
 
-                        <span>
-                            머미 비용
-                        </span>
+                <span>
+                    머미 1인당
+                </span>
 
-                        <input
-                            class="meomi-cost-input"
-                            type="number"
-                            min="0"
-                            step="1000"
-                            value="${price.meomiCost}"
-                        >
+                <input
+                    class="meomi-cost-input"
+                    type="number"
+                    min="0"
+                    step="1000"
+                    value="${price.meomiPricePerPerson}"
+                >
 
-                    </div>
-                `
-                : ''
-        }
+                <span>
+                    원
+                </span>
+
+            </div>
+
+
+            <div class="meomi-cost-result">
+
+                머미 비용
+
+                ${price.chargedPeople}명
+                ×
+                ${formatMoney(
+                    price.meomiPricePerPerson
+                )}
+
+                =
+                <strong>
+                    ${formatMoney(
+                        price.meomiTotal
+                    )}
+                </strong>
+
+            </div>
+        `
+        : ''
+}
 
     </div>
 
@@ -1698,7 +1766,7 @@ tagButtons.forEach(
     }
 );
 
-/* 머미 추가 비용 */
+/* 머미 1인당 비용 */
 
 const meomiCostInput =
     row.querySelector(
