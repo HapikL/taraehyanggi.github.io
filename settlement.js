@@ -570,13 +570,19 @@ const pricePerPerson =
         ) || 0;
 
 
-    const excludedPeople =
-        Math.max(
-            0,
-            Number(
-                payment?.excluded_people
-            ) || 0
-        );
+const selectedTags =
+    Array.isArray(
+        payment?.exclude_tags
+    )
+        ? payment.exclude_tags
+        : [];
+
+
+const excludedPeople =
+    Math.min(
+        people,
+        selectedTags.length
+    );
 
 
     const chargedPeople =
@@ -1749,36 +1755,6 @@ const price =
 
     </div>
 
-
-    <!-- 제외 인원 -->
-
-    <div class="exclude-people-control">
-
-        <span class="exclude-label">
-            제외
-        </span>
-
-        <button
-            class="exclude-minus"
-            type="button"
-        >
-            −
-        </button>
-
-        <span class="exclude-count">
-            ${price.excludedPeople}
-        </span>
-
-        <button
-            class="exclude-plus"
-            type="button"
-        >
-            +
-        </button>
-
-    </div>
-
-
  <!-- 금액 -->
 
 <div class="daily-price-area">
@@ -1980,61 +1956,7 @@ if (meomiCostInput) {
     );
 }
            
-const minusButton =
-    row.querySelector(
-        '.exclude-minus'
-    );
 
-const plusButton =
-    row.querySelector(
-        '.exclude-plus'
-    );
-
-
-minusButton.addEventListener(
-    'click',
-    async () => {
-
-        const current =
-            price.excludedPeople;
-
-
-        await setExcludedPeople(
-            event.id,
-            Math.max(
-                0,
-                current - 1
-            )
-        );
-    }
-);
-
-
-plusButton.addEventListener(
-    'click',
-    async () => {
-
-        const current =
-            price.excludedPeople;
-
-
-        /*
-           전체 인원보다 많이 제외되지 않도록 제한
-        */
-
-        const next =
-            Math.min(
-                price.people,
-                current + 1
-            );
-
-
-        await setExcludedPeople(
-            event.id,
-            next
-        );
-    }
-);
             const button =
                 row.querySelector(
                     '.payment-status-button'
@@ -2473,30 +2395,8 @@ async function savePaymentSettings(
     await loadDailySettlement();
 }
 
-
-
 /* ==================================================
-   27-3. 제외 인원 저장
-================================================== */
-
-async function setExcludedPeople(
-    eventId,
-    excludedPeople
-) {
-
-    await savePaymentSettings(
-        eventId,
-        {
-            excluded_people:
-                excludedPeople
-        }
-    );
-}
-
-
-
-/* ==================================================
-   27-4. 제외 태그 저장
+   27-3. 제외 태그 저장
 ================================================== */
 
 async function setExcludeTags(
@@ -2516,7 +2416,7 @@ async function setExcludeTags(
 
 
 /* ==================================================
-   27-5. 머미 비용 저장
+   27-4. 머미 비용 저장
 ================================================== */
 
 async function setMeomiCost(
