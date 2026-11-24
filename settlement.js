@@ -631,6 +631,10 @@ async function loadMonthlySettlement() {
                     'start_date',
                     range.end
                 )
+           .neq(
+              'category',
+              '기타'
+              )
                 .order(
                     'start_date',
                     {
@@ -1249,6 +1253,10 @@ async function loadDailySettlement() {
                     'start_date',
                     selectedDate
                 )
+               .neq(
+        'category',
+        '기타'
+    )
                 .order(
                     'event_time',
                     {
