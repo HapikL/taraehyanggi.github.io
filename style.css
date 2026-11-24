@@ -880,6 +880,17 @@ body {
 /* =========================
    로그인 / 빠른 일정 추가
 ========================= */
+.dott-reservation-banner {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+
+    order: 10;
+
+    padding: 0 14px;
+
+    font-size: 12px;
+}
 
 .auth-actions {
     display: flex;
@@ -1202,4 +1213,47 @@ body {
 
         min-height: 42px;
     }
+}
+/* =========================
+   도트 예약 페이지 배너
+========================= */
+
+.dott-reservation-banner {
+    min-width: 220px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 0 16px;
+
+    border: 1px solid #d8c9b5;
+    border-radius: 10px;
+
+    background: #fff8ed;
+    color: #5c4630;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    box-sizing: border-box;
+
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+}
+
+.dott-reservation-banner:hover {
+    background: #f8ead7;
+    transform: translateY(-1px);
+}
+
+.dott-reservation-banner span {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94785c;
 }
