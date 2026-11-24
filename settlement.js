@@ -577,49 +577,7 @@ function getEventPrice(
             chargedPeople *
             pricePerPerson
     };
-} {
-
-    const date =
-        parseDate(
-            event.start_date
-        );
-
-
-    const weekday =
-        date.getDay();
-
-
-    const weekend =
-        weekday === 0 ||
-        weekday === 6;
-
-
-    const pricePerPerson =
-        weekend
-            ? 12000
-            : 10000;
-
-
-    const people =
-        Number(
-            event.people_count
-        ) || 0;
-
-
-    return {
-
-        people,
-
-        pricePerPerson,
-
-        total:
-            people *
-            pricePerPerson
-    };
 }
-
-
-
 /* ==================================================
    15. 월 시작 / 마지막 날짜
 ================================================== */
@@ -2427,7 +2385,6 @@ editingParkingId =
 );
 
 
-
 /* ==================================================
    33. 주차 팝업 취소
 ================================================== */
@@ -2438,12 +2395,12 @@ cancelParkingButton.addEventListener(
 
         parkingModal.classList.add(
             'hidden'
-           editingParkingId =
-    null;
         );
+
+        editingParkingId =
+            null;
     }
 );
-
 
 
 /* ==================================================
