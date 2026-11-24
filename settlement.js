@@ -75,14 +75,19 @@ const monthReceivedTotal =
         'monthReceivedTotal'
     );
 
+const monthReceivedParking =
+    document.getElementById(
+        'monthReceivedParking'
+    );
+
+const monthReceivedMeomi =
+    document.getElementById(
+        'monthReceivedMeomi'
+    );
+
 const monthUnpaidTotal =
     document.getElementById(
         'monthUnpaidTotal'
-    );
-
-const monthParkingTotal =
-    document.getElementById(
-        'monthParkingTotal'
     );
 
 
@@ -571,14 +576,14 @@ function getEventPrice(
         );
 
 
-    /* 공방 기본 이용료 */
-
     const baseTotal =
         chargedPeople *
         pricePerPerson;
 
 
-    /* 머미 1인당 비용 */
+    /*
+       머미 1인당 비용
+    */
 
     const meomiPricePerPerson =
         event.category === '머미'
@@ -591,14 +596,10 @@ function getEventPrice(
             : 0;
 
 
-    /* 머미 비용 총액 */
-
     const meomiTotal =
         chargedPeople *
         meomiPricePerPerson;
 
-
-    /* 최종 이용료 */
 
     const total =
         baseTotal +
@@ -1228,7 +1229,10 @@ const selectedTags =
 function renderMonthSummary() {
 
     let eventAmount = 0;
-    let receivedAmount = 0;
+
+    let receivedEventAmount = 0;
+
+    let receivedMeomiAmount = 0;
 
 
     monthlyEvents.forEach(
@@ -1242,14 +1246,15 @@ function renderMonthSummary() {
                 );
 
 
-            const amount =
+            const price =
                 getEventPrice(
                     event,
                     payment
-                ).total;
+                );
 
 
-            eventAmount += amount;
+            eventAmount +=
+                price.total;
 
 
             if (
@@ -1257,12 +1262,19 @@ function renderMonthSummary() {
                 true
             ) {
 
-                receivedAmount +=
-                    amount;
+                receivedEventAmount +=
+                    price.total;
+
+                receivedMeomiAmount +=
+                    price.meomiTotal;
             }
         }
     );
 
+
+    /*
+       이번 달 전체 주차비
+    */
 
     const parkingAmount =
         monthlyParkingRecords.reduce(
@@ -1272,17 +1284,32 @@ function renderMonthSummary() {
             ) => {
 
                 return (
-                    total
-                    +
-                    Number(
-                        record.parking_hours
-                    )
-                    *
-                    100
+                    total +
+                    (
+                        Number(
+                            record.parking_hours
+                        ) || 0
+                    ) * 100
                 );
+
             },
             0
         );
+
+
+    /*
+       받은 금액 =
+       받은 일정 금액 + 주차비
+    */
+
+    const receivedAmount =
+        receivedEventAmount +
+        parkingAmount;
+
+
+    const unpaidAmount =
+        eventAmount -
+        receivedEventAmount;
 
 
     monthEventTotal.textContent =
@@ -1290,23 +1317,30 @@ function renderMonthSummary() {
             eventAmount
         );
 
+
     monthReceivedTotal.textContent =
         formatMoney(
             receivedAmount
         );
 
-    monthUnpaidTotal.textContent =
-        formatMoney(
-            eventAmount -
-            receivedAmount
-        );
 
-    monthParkingTotal.textContent =
+    monthReceivedParking.textContent =
         formatMoney(
             parkingAmount
         );
-}
 
+
+    monthReceivedMeomi.textContent =
+        formatMoney(
+            receivedMeomiAmount
+        );
+
+
+    monthUnpaidTotal.textContent =
+        formatMoney(
+            unpaidAmount
+        );
+}
 /* ==================================================
    20. 월별 필터 버튼
 ================================================== */
