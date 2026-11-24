@@ -1779,41 +1779,51 @@ const price =
     </div>
 
 
-    <!-- 금액 -->
+ <!-- 금액 -->
 
-    <div class="daily-price-area">
+<div class="daily-price-area">
     
-<div class="daily-event-amount">
+    <div class="daily-event-amount">
 
-    <strong>
-        ${formatMoney(
-            price.total
-        )}
-    </strong>
+        <strong>
+            ${formatMoney(
+                price.total
+            )}
+        </strong>
 
-    ${
-        event.category === '머미'
-            ? `
-                <div class="daily-event-meta">
+        <div class="daily-price-note">
 
-                    공방
-                    ${formatMoney(
-                        price.baseTotal
-                    )}
+            ${
+                event.ab_type === 'O'
+                    ? `🏕️ 유목민 · 1인 ${formatMoney(price.pricePerPerson)}`
+                    : `공방 · 1인 ${formatMoney(price.pricePerPerson)}`
+            }
 
-                    +
+        </div>
 
-                    머미
-                    ${formatMoney(
-                        price.meomiTotal
-                    )}
+        ${
+            event.category === '머미'
+                ? `
+                    <div class="daily-event-meta">
 
-                </div>
-            `
-            : ''
-    }
+                        공방
+                        ${formatMoney(
+                            price.baseTotal
+                        )}
 
-</div>
+                        +
+
+                        머미
+                        ${formatMoney(
+                            price.meomiTotal
+                        )}
+
+                    </div>
+                `
+                : ''
+        }
+
+    </div>
 
 
         ${
