@@ -1011,6 +1011,16 @@ grid-template-columns:
     font-weight: 800;
 }
 
+.daily-price-note {
+    margin-top: 4px;
+
+    color: #7b8b9d;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
 
 /* 머미 1인당 비용 */
 
