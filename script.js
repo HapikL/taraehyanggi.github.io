@@ -814,12 +814,12 @@ function openEditEventModal(event) {
         event.category || '머미';
 
     eventNomad.value =
-        (
-            event.ab_type === 'O' ||
-            event.ab_type === 'X'
-        )
-            ? event.ab_type
-            : '';
+    (
+        event.ab_type === 'O' ||
+        event.ab_type === 'X'
+    )
+        ? event.ab_type
+        : 'X';
 
 
     deleteEventButton.style.display =
