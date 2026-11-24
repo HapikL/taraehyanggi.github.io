@@ -529,6 +529,7 @@ button {
         80px
         105px
         minmax(250px, 1fr)
+        90px
         75px
         120px
         125px
@@ -583,6 +584,12 @@ button {
 
 .table-date {
     color: #294f7c;
+
+    font-weight: 700;
+}
+
+.table-host {
+    color: #5f738a;
 
     font-weight: 700;
 }
