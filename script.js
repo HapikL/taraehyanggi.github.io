@@ -52,9 +52,6 @@ const quickAddEventButton =
 const settlementButton =
     document.getElementById('settlementButton');
 
-const pageLoading =
-    document.getElementById('pageLoading');
-
 const loginModal =
     document.getElementById('loginModal');
 
@@ -376,32 +373,7 @@ async function checkLogin() {
         : 'none';
 }
 
-settlementButton.addEventListener(
-    'click',
-    event => {
 
-        event.preventDefault();
-
-        pageLoading.classList.remove(
-            'hidden'
-        );
-
-        requestAnimationFrame(
-            () => {
-
-                setTimeout(
-                    () => {
-
-                        location.href =
-                            'settlement.html';
-
-                    },
-                    120
-                );
-            }
-        );
-    }
-);
 
 /* ==================================================
    06. 로그인 / 로그아웃
