@@ -883,15 +883,12 @@ body {
 .dott-reservation-banner {
     width: 100%;
     min-width: 0;
-    height: 40px;
-
-    order: 10;
+    min-height: 44px;
 
     padding: 0 14px;
 
-    font-size: 12px;
+    font-size: 13px;
 }
-
 .auth-actions {
     display: flex;
     flex-direction: column;
@@ -1219,23 +1216,22 @@ body {
 ========================= */
 
 .dott-reservation-banner {
-    min-width: 220px;
-    height: 42px;
+    width: min(560px, 48%);
+    min-height: 54px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
 
-    padding: 0 16px;
+    padding: 0 20px;
 
     border: 1px solid #d8c9b5;
-    border-radius: 10px;
+    border-radius: 14px;
 
     background: #fff8ed;
     color: #5c4630;
 
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 800;
 
     text-decoration: none;
@@ -1245,15 +1241,4 @@ body {
     transition:
         background 0.15s ease,
         transform 0.15s ease;
-}
-
-.dott-reservation-banner:hover {
-    background: #f8ead7;
-    transform: translateY(-1px);
-}
-
-.dott-reservation-banner span {
-    font-size: 11px;
-    font-weight: 600;
-    color: #94785c;
 }
