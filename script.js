@@ -686,50 +686,24 @@ const numberElement = document.createElement('div');
 numberElement.classList.add('day-number');
 numberElement.textContent = displayDay;
 
-/* 해당 날짜의 A/B 일정 존재 여부 */
-
 const statusEvents = events.filter(
     event => event.start_date === dateString
 );
 
-const hasA = statusEvents.some(
-    event => event.ab_type === 'A'
+const hasNomadEvent = statusEvents.some(
+    event => event.ab_type === 'O'
 );
 
-const hasB = statusEvents.some(
-    event => event.ab_type === 'B'
-);
+const nomadIndicator = document.createElement('span');
+nomadIndicator.classList.add('nomad-indicator');
 
-
-/* A/B 표시 영역 */
-
-const abStatusElement = document.createElement('div');
-abStatusElement.classList.add('ab-status');
-
-
-const aIndicator = document.createElement('span');
-aIndicator.classList.add('ab-indicator', 'ab-a');
-aIndicator.textContent = 'A';
-
-if (hasA) {
-    aIndicator.classList.add('active');
+if (hasNomadEvent) {
+    nomadIndicator.textContent = '🏕️';
 }
-
-
-const bIndicator = document.createElement('span');
-bIndicator.classList.add('ab-indicator', 'ab-b');
-bIndicator.textContent = 'B';
-
-if (hasB) {
-    bIndicator.classList.add('active');
-}
-
-
-abStatusElement.appendChild(aIndicator);
-abStatusElement.appendChild(bIndicator);
 
 dayHeaderElement.appendChild(numberElement);
-dayHeaderElement.appendChild(abStatusElement);
+dayHeaderElement.appendChild(nomadIndicator);
+
 
 dayElement.appendChild(dayHeaderElement);
         
@@ -796,15 +770,13 @@ eventElement.dataset.eventId = event.id;
 });
             
 eventElement.innerHTML = `
-    <div class="event-top-row">
-        <div class="event-time">${event.event_time || '--:--'}</div>
-
-        <span class="event-ab-badge ${event.ab_type === 'A' ? 'event-ab-a' : 'event-ab-b'}">
-            ${event.ab_type || ''}
-        </span>
+    <div class="event-time">
+        ${event.event_time || '--:--'}
     </div>
 
-    <div class="event-title">${event.title || ''}</div>
+    <div class="event-title">
+        ${event.title || ''}
+    </div>
 
     <div class="event-meta">
         <span>${event.people_count ?? '-'}명</span>
@@ -1009,7 +981,7 @@ if (!selectedDate) {
     }
     
 if (!eventABType.value) {
-    alert('A 또는 B를 선택하세요.');
+    alert('유목민 여부를 선택하세요.');
     return;
 }
     
