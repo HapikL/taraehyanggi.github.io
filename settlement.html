@@ -14,7 +14,7 @@
 
     <link
         rel="stylesheet"
-        href="settlement.css?v=1"
+        href="settlement.css?v=2"
     >
 
 </head>
@@ -22,206 +22,576 @@
 
 <body>
 
-<main class="settlement-app">
 
+<!-- ==================================================
+     01. 관리자 상단 헤더
+=================================================== -->
 
-    <!-- ==================================================
-         01. 상단
-    =================================================== -->
+<header class="admin-topbar">
 
-    <header class="settlement-header">
+    <div class="admin-brand">
 
-        <div>
-            <h1>💰 정산 관리</h1>
-
-            <p>
-                공방 이용료 및 주차비 정산
-            </p>
+        <div class="admin-logo">
+            W
         </div>
 
+        <div>
+            <strong>WORKSHOP ADMIN</strong>
+            <span>공방 운영 관리</span>
+        </div>
+
+    </div>
+
+
+    <div class="admin-topbar-center">
+        INTERNAL MANAGEMENT
+    </div>
+
+
+    <div class="admin-topbar-actions">
 
         <a
             href="index.html"
-            class="back-button"
+            class="topbar-button"
         >
-            ← 캘린더
+            ↗ 캘린더
         </a>
 
-    </header>
+    </div>
+
+</header>
 
 
 
-    <!-- ==================================================
-         02. 날짜 선택
-    =================================================== -->
-
-    <section class="date-card">
-
-        <button
-            id="prevDayButton"
-            type="button"
-        >
-            ‹
-        </button>
-
-        <input
-            id="settlementDate"
-            type="date"
-        >
-
-        <button
-            id="nextDayButton"
-            type="button"
-        >
-            ›
-        </button>
-
-        <button
-            id="todayButton"
-            type="button"
-        >
-            오늘
-        </button>
-
-    </section>
-
+<div class="admin-layout">
 
 
     <!-- ==================================================
-         03. 일정 정산
+         02. 좌측 관리자 메뉴
     =================================================== -->
 
-    <section class="settlement-section">
+    <aside class="admin-sidebar">
 
-        <div class="section-title">
-
-            <h2>일정 이용료</h2>
-
-            <span id="eventCount">
-                0건
-            </span>
-
+        <div class="sidebar-label">
+            WORKSPACE
         </div>
 
 
-        <div id="eventSettlementList">
+        <nav class="sidebar-nav">
 
-            일정이 없습니다.
+            <a href="index.html">
+                📅 캘린더
+            </a>
 
-        </div>
-
-    </section>
-
-
-
-    <!-- ==================================================
-         04. 주차 정산
-    =================================================== -->
-
-    <section class="settlement-section">
-
-        <div class="section-title">
-
-            <h2>🚗 주차 정산</h2>
-
-            <button
-                id="addParkingButton"
-                type="button"
+            <a
+                href="settlement.html"
+                class="active"
             >
-                + 주차 추가
-            </button>
+                💰 정산 관리
+            </a>
 
+        </nav>
+
+
+        <div class="sidebar-label sidebar-bottom-label">
+            ACCOUNT
         </div>
 
 
-        <div id="parkingList">
+        <button
+            id="logoutButton"
+            class="sidebar-logout"
+            type="button"
+        >
+            로그아웃
+        </button>
 
-            주차 기록이 없습니다.
-
-        </div>
-
-    </section>
+    </aside>
 
 
 
     <!-- ==================================================
-         05. 하루 정산 합계
+         03. 메인 콘텐츠
     =================================================== -->
 
-    <section class="total-card">
-
-        <div class="total-row">
-
-            <span>
-                공방 이용료
-            </span>
-
-            <strong id="eventTotal">
-                0원
-            </strong>
-
-        </div>
+    <main class="admin-content">
 
 
-        <div class="total-row">
+        <!-- ==================================================
+             04. 페이지 제목 / 상단 버튼
+        =================================================== -->
 
-            <span>
-                주차비
-            </span>
+        <section class="page-header">
 
-            <strong id="parkingTotal">
-                0원
-            </strong>
+            <div>
 
-        </div>
+                <div class="page-eyebrow">
+                    WORKSHOP / FINANCE
+                </div>
 
+                <h1>
+                    정산 관리
+                </h1>
 
-        <div class="total-row grand-total">
+                <p>
+                    공방 이용료와 주차 정산 현황을 관리합니다.
+                </p>
 
-            <span>
-                하루 총 정산금액
-            </span>
-
-            <strong id="dayTotal">
-                0원
-            </strong>
-
-        </div>
+            </div>
 
 
-        <div class="total-row received-total">
+            <div class="page-actions">
 
-            <span>
-                받은 이용료
-            </span>
+                <a
+                    href="index.html"
+                    class="outline-button"
+                >
+                    ↗ 캘린더
+                </a>
 
-            <strong id="receivedTotal">
-                0원
-            </strong>
+                <button
+                    id="refreshButton"
+                    class="outline-button"
+                    type="button"
+                >
+                    ↻ 새로고침
+                </button>
 
-        </div>
+                <button
+                    id="headerLogoutButton"
+                    class="outline-button"
+                    type="button"
+                >
+                    로그아웃
+                </button>
+
+            </div>
+
+        </section>
 
 
-        <div class="total-row unpaid-total">
 
-            <span>
-                아직 못받은 이용료
-            </span>
+        <!-- ==================================================
+             05. 월별 요약 카드
+        =================================================== -->
 
-            <strong id="unpaidTotal">
-                0원
-            </strong>
+        <section class="summary-grid">
 
-        </div>
+            <article class="summary-card">
 
-    </section>
+                <span class="summary-label">
+                    이번 달 이용료
+                </span>
 
-</main>
+                <strong id="monthEventTotal">
+                    0원
+                </strong>
+
+            </article>
+
+
+            <article class="summary-card received-card">
+
+                <span class="summary-label">
+                    받은 금액
+                </span>
+
+                <strong id="monthReceivedTotal">
+                    0원
+                </strong>
+
+            </article>
+
+
+            <article class="summary-card unpaid-card">
+
+                <span class="summary-label">
+                    미수금
+                </span>
+
+                <strong id="monthUnpaidTotal">
+                    0원
+                </strong>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <span class="summary-label">
+                    주차 정산
+                </span>
+
+                <strong id="monthParkingTotal">
+                    0원
+                </strong>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- ==================================================
+             06. 월별 정산 리스트
+        =================================================== -->
+
+        <section class="management-panel">
+
+
+            <!-- 상단 필터 -->
+
+            <div class="management-toolbar">
+
+                <div class="status-tabs">
+
+                    <button
+                        class="status-tab active"
+                        data-filter="all"
+                        type="button"
+                    >
+                        전체
+                    </button>
+
+                    <button
+                        class="status-tab"
+                        data-filter="unpaid"
+                        type="button"
+                    >
+                        미수금
+                    </button>
+
+                    <button
+                        class="status-tab"
+                        data-filter="received"
+                        type="button"
+                    >
+                        정산 완료
+                    </button>
+
+                </div>
+
+
+                <div class="toolbar-right">
+
+                    <button
+                        id="addParkingTopButton"
+                        class="primary-button"
+                        type="button"
+                    >
+                        + 주차 추가
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 월 이동 -->
+
+            <div class="month-toolbar">
+
+                <div class="month-navigation">
+
+                    <button
+                        id="prevMonthButton"
+                        type="button"
+                    >
+                        ‹
+                    </button>
+
+                    <input
+                        id="historyMonth"
+                        type="month"
+                    >
+
+                    <button
+                        id="nextMonthButton"
+                        type="button"
+                    >
+                        ›
+                    </button>
+
+                    <button
+                        id="currentMonthButton"
+                        type="button"
+                    >
+                        이번 달
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="monthlyCountBadge"
+                    class="count-badge"
+                >
+                    0건
+                </div>
+
+            </div>
+
+
+
+            <!-- 정산 테이블 -->
+
+            <div class="table-scroll">
+
+                <div class="settlement-table">
+
+                    <!-- 테이블 제목 -->
+                    <div class="table-row table-header">
+
+                        <div>날짜</div>
+
+                        <div>시간</div>
+
+                        <div>카테고리</div>
+
+                        <div>일정명</div>
+
+                        <div>인원</div>
+
+                        <div>이용료</div>
+
+                        <div>수납 상태</div>
+
+                        <div>관리</div>
+
+                    </div>
+
+
+                    <!-- 실제 일정 -->
+                    <div id="monthlySettlementList">
+
+                        <div class="empty-message">
+                            정산 기록을 불러오는 중입니다.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==================================================
+             07. 선택 날짜 상세 정산
+        =================================================== -->
+
+        <section
+            id="dailyDetailSection"
+            class="daily-detail-section"
+        >
+
+            <div class="daily-detail-header">
+
+                <div>
+
+                    <div class="page-eyebrow">
+                        DAILY SETTLEMENT
+                    </div>
+
+                    <h2 id="dailyDetailTitle">
+                        오늘 정산
+                    </h2>
+
+                    <p>
+                        선택한 날짜의 이용료와 주차비입니다.
+                    </p>
+
+                </div>
+
+
+                <div class="daily-date-controls">
+
+                    <button
+                        id="prevDayButton"
+                        type="button"
+                    >
+                        ‹
+                    </button>
+
+                    <input
+                        id="settlementDate"
+                        type="date"
+                    >
+
+                    <button
+                        id="nextDayButton"
+                        type="button"
+                    >
+                        ›
+                    </button>
+
+                    <button
+                        id="todayButton"
+                        type="button"
+                    >
+                        오늘
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 08. 선택 날짜 일정
+            =================================================== -->
+
+            <div class="detail-block">
+
+                <div class="detail-block-header">
+
+                    <h3>
+                        일정 이용료
+                    </h3>
+
+                    <span
+                        id="eventCount"
+                        class="small-count"
+                    >
+                        0건
+                    </span>
+
+                </div>
+
+
+                <div id="eventSettlementList">
+
+                    <div class="empty-message">
+                        일정이 없습니다.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 09. 선택 날짜 주차
+            =================================================== -->
+
+            <div class="detail-block">
+
+                <div class="detail-block-header">
+
+                    <h3>
+                        🚗 주차 정산
+                    </h3>
+
+                    <button
+                        id="addParkingButton"
+                        class="small-primary-button"
+                        type="button"
+                    >
+                        + 주차 추가
+                    </button>
+
+                </div>
+
+
+                <div id="parkingList">
+
+                    <div class="empty-message">
+                        주차 기록이 없습니다.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 10. 선택 날짜 총 정산
+            =================================================== -->
+
+            <div class="daily-total-box">
+
+                <div class="total-item">
+
+                    <span>
+                        이용료
+                    </span>
+
+                    <strong id="eventTotal">
+                        0원
+                    </strong>
+
+                </div>
+
+
+                <div class="total-item">
+
+                    <span>
+                        주차비
+                    </span>
+
+                    <strong id="parkingTotal">
+                        0원
+                    </strong>
+
+                </div>
+
+
+                <div class="total-item total-received">
+
+                    <span>
+                        받은 이용료
+                    </span>
+
+                    <strong id="receivedTotal">
+                        0원
+                    </strong>
+
+                </div>
+
+
+                <div class="total-item total-unpaid">
+
+                    <span>
+                        미수금
+                    </span>
+
+                    <strong id="unpaidTotal">
+                        0원
+                    </strong>
+
+                </div>
+
+
+                <div class="total-item grand-total">
+
+                    <span>
+                        하루 총 정산금액
+                    </span>
+
+                    <strong id="dayTotal">
+                        0원
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 
 
 <!-- ==================================================
-     06. 주차 추가 팝업
+     11. 주차 추가 팝업
 =================================================== -->
 
 <div
@@ -236,32 +606,46 @@
         </h3>
 
 
+        <label class="input-label">
+            이름
+        </label>
+
         <input
             id="parkingName"
             type="text"
-            placeholder="이름"
+            placeholder="예: 지훈"
         >
 
+
+        <label class="input-label">
+            차번호
+        </label>
 
         <input
             id="parkingCarNumber"
             type="text"
-            placeholder="차번호"
+            placeholder="예: 12가3456"
         >
 
+
+        <label class="input-label">
+            주차시간
+        </label>
 
         <input
             id="parkingHours"
             type="number"
             min="0"
             step="0.5"
-            placeholder="주차시간"
+            placeholder="예: 3"
         >
 
 
         <div class="parking-preview">
 
-            예상 주차비
+            <span>
+                예상 주차비
+            </span>
 
             <strong id="parkingPreview">
                 0원
@@ -281,8 +665,8 @@
 
             <button
                 id="saveParkingButton"
+                class="modal-save-button"
                 type="button"
-                class="primary-button"
             >
                 저장
             </button>
@@ -296,12 +680,12 @@
 
 
 <!-- ==================================================
-     07. JavaScript
+     12. JavaScript
 =================================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="settlement.js?v=1"></script>
+<script src="settlement.js?v=2"></script>
 
 
 </body>
