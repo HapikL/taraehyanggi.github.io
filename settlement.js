@@ -1119,6 +1119,14 @@ const selectedTags =
 
 </div>
 
+<div class="table-host">
+
+    ${escapeHTML(
+        event.host_name ||
+        '-'
+    )}
+
+</div>
 
                 <div>
 
