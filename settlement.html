@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>공방 정산 관리</title>
+
+    <link
+        rel="stylesheet"
+        href="settlement.css?v=1"
+    >
+
+</head>
+
+
+<body>
+
+<main class="settlement-app">
+
+
+    <!-- ==================================================
+         01. 상단
+    =================================================== -->
+
+    <header class="settlement-header">
+
+        <div>
+            <h1>💰 정산 관리</h1>
+
+            <p>
+                공방 이용료 및 주차비 정산
+            </p>
+        </div>
+
+
+        <a
+            href="index.html"
+            class="back-button"
+        >
+            ← 캘린더
+        </a>
+
+    </header>
+
+
+
+    <!-- ==================================================
+         02. 날짜 선택
+    =================================================== -->
+
+    <section class="date-card">
+
+        <button
+            id="prevDayButton"
+            type="button"
+        >
+            ‹
+        </button>
+
+        <input
+            id="settlementDate"
+            type="date"
+        >
+
+        <button
+            id="nextDayButton"
+            type="button"
+        >
+            ›
+        </button>
+
+        <button
+            id="todayButton"
+            type="button"
+        >
+            오늘
+        </button>
+
+    </section>
+
+
+
+    <!-- ==================================================
+         03. 일정 정산
+    =================================================== -->
+
+    <section class="settlement-section">
+
+        <div class="section-title">
+
+            <h2>일정 이용료</h2>
+
+            <span id="eventCount">
+                0건
+            </span>
+
+        </div>
+
+
+        <div id="eventSettlementList">
+
+            일정이 없습니다.
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==================================================
+         04. 주차 정산
+    =================================================== -->
+
+    <section class="settlement-section">
+
+        <div class="section-title">
+
+            <h2>🚗 주차 정산</h2>
+
+            <button
+                id="addParkingButton"
+                type="button"
+            >
+                + 주차 추가
+            </button>
+
+        </div>
+
+
+        <div id="parkingList">
+
+            주차 기록이 없습니다.
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==================================================
+         05. 하루 정산 합계
+    =================================================== -->
+
+    <section class="total-card">
+
+        <div class="total-row">
+
+            <span>
+                공방 이용료
+            </span>
+
+            <strong id="eventTotal">
+                0원
+            </strong>
+
+        </div>
+
+
+        <div class="total-row">
+
+            <span>
+                주차비
+            </span>
+
+            <strong id="parkingTotal">
+                0원
+            </strong>
+
+        </div>
+
+
+        <div class="total-row grand-total">
+
+            <span>
+                하루 총 정산금액
+            </span>
+
+            <strong id="dayTotal">
+                0원
+            </strong>
+
+        </div>
+
+
+        <div class="total-row received-total">
+
+            <span>
+                받은 이용료
+            </span>
+
+            <strong id="receivedTotal">
+                0원
+            </strong>
+
+        </div>
+
+
+        <div class="total-row unpaid-total">
+
+            <span>
+                아직 못받은 이용료
+            </span>
+
+            <strong id="unpaidTotal">
+                0원
+            </strong>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<!-- ==================================================
+     06. 주차 추가 팝업
+=================================================== -->
+
+<div
+    id="parkingModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+        <h3>
+            주차 정산 추가
+        </h3>
+
+
+        <input
+            id="parkingName"
+            type="text"
+            placeholder="이름"
+        >
+
+
+        <input
+            id="parkingCarNumber"
+            type="text"
+            placeholder="차번호"
+        >
+
+
+        <input
+            id="parkingHours"
+            type="number"
+            min="0"
+            step="0.5"
+            placeholder="주차시간"
+        >
+
+
+        <div class="parking-preview">
+
+            예상 주차비
+
+            <strong id="parkingPreview">
+                0원
+            </strong>
+
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button
+                id="cancelParkingButton"
+                type="button"
+            >
+                취소
+            </button>
+
+            <button
+                id="saveParkingButton"
+                type="button"
+                class="primary-button"
+            >
+                저장
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     07. JavaScript
+=================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="settlement.js?v=1"></script>
+
+
+</body>
+</html>
