@@ -1,380 +1,124 @@
+/* ==================================================
+   01. 기본 설정
+================================================== */
+
 * {
     box-sizing: border-box;
 }
 
+html,
 body {
     margin: 0;
+    padding: 0;
+}
+
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
 
-    background: #f6f7f9;
+    background: #f6f1e8;
     color: #1f2937;
 }
 
-button {
+button,
+input,
+textarea,
+select {
     font: inherit;
 }
+
+button {
+    cursor: pointer;
+}
+
+
+
+/* ==================================================
+   02. 전체 레이아웃
+================================================== */
 
 .calendar-app {
     width: min(1400px, 96%);
-    margin: 40px auto;
+    margin: 32px auto;
 }
 
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 30px;
 
-    margin-bottom: 24px;
-}
 
-.calendar-header h1 {
-    margin: 0;
-    font-size: 32px;
-}
-
-.calendar-header p {
-    margin: 5px 0 0;
-    color: #6b7280;
-}
-
-.calendar-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.calendar-controls h2 {
-    min-width: 170px;
-    text-align: center;
-    margin: 0;
-    font-size: 22px;
-}
-
-.calendar-controls button {
-    border: 1px solid #d1d5db;
-    background: white;
-
-    padding: 9px 14px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-}
-
-.calendar-controls button:hover {
-    background: #f3f4f6;
-}
-
-.today-button {
-    margin-left: 8px;
-}
-
-.calendar {
-    background: white;
-    border: 1px solid #e5e7eb;
-
-    border-radius: 14px;
-
-    overflow: hidden;
-
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-}
-
-.weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-
-    background: #f9fafb;
-
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.weekdays div {
-    padding: 14px;
-    text-align: center;
-
-    font-weight: 600;
-    color: #4b5563;
-}
-
-.weekdays .sunday {
-    color: #dc2626;
-}
-
-.weekdays .saturday {
-    color: #2563eb;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-}
-
-.day {
-    min-height: 150px;
-
-    padding: 10px;
-
-    border-right: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
-
-    background: white;
-}
-
-.day:nth-child(7n) {
-    border-right: none;
-}
-
-.day-number {
-    width: 30px;
-    height: 30px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    margin-bottom: 7px;
-
-    font-size: 14px;
-}
-
-.other-month {
-    background: #fafafa;
-    color: #9ca3af;
-}
-
-.today .day-number {
-    background: #111827;
-    color: white;
-    font-weight: 700;
-}
-
-.event {
-    padding: 6px 8px;
-    margin-top: 5px;
-
-    border-radius: 6px;
-
-    background: #e0e7ff;
-    color: #3730a3;
-
-    font-size: 13px;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-
-    cursor: pointer;
-}
-.category-머미 {
-    background: #fde2e4;
-    color: #9f1239;
-}
-
-.category-보겜 {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-.category-협추 {
-    background: #dcfce7;
-    color: #15803d;
-}
-
-.category-기타 {
-    background: #f3e8ff;
-    color: #7e22ce;
-}
-
-@media (max-width: 800px) {
-
-    .calendar-app {
-        width: 100%;
-        margin: 0;
-    }
-
-    .calendar-header {
-        padding: 18px;
-
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .calendar {
-        border-radius: 0;
-    }
-
-    .calendar-controls {
-        width: 100%;
-        flex-wrap: wrap;
-    }
-
-    .calendar-controls h2 {
-        flex: 1;
-    }
-
-    .day {
-        min-height: 100px;
-        padding: 6px;
-    }
-
-    .event {
-        font-size: 11px;
-        padding: 4px;
-    }
-}
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    z-index: 1000;
-}
-
-.hidden {
-    display: none;
-}
-
-.modal-content {
-    width: min(420px, 90%);
-    background: white;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-}
-
-.modal-content h3 {
-    margin-top: 0;
-}
-
-.modal-content input,
-.modal-content textarea,
-.modal-content select {
-    width: 100%;
-    margin-top: 12px;
-    padding: 10px 12px;
-
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-
-    font: inherit;
-}
-
-.modal-content textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 20px;
-}
-
-.modal-buttons button {
-    padding: 9px 16px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background: white;
-    cursor: pointer;
-}
-/* 팝업 강제 적용 */
-#eventModal {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: rgba(0, 0, 0, 0.4);
-}
-
-#eventModal.hidden {
-    display: none !important;
-}
-
-#eventModal .modal-content {
-    width: min(420px, 90%);
-    padding: 24px;
-
-    background: white;
-    border-radius: 14px;
-
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-}
-/* =========================
-   상단 요약 영역
-========================= */
+/* ==================================================
+   03. 오늘 일정 / 카테고리 색상
+================================================== */
 
 .dashboard-row {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 18px;
+
     margin-bottom: 24px;
 }
 
 .today-summary-card,
 .category-legend-card {
-    background: #fffdf9;
+    padding: 18px;
+
     border: 1px solid #e5d7c5;
     border-radius: 18px;
-    padding: 18px;
+
+    background: #fffdf9;
 }
+
+
+/* 오늘 일정 */
 
 .today-summary-card {
     display: flex;
     align-items: flex-start;
     gap: 14px;
+
     background: #eef8ef;
     border-color: #9ad0a8;
 }
+
 .today-summary-card.no-events {
     background: #fff0f0;
     border-color: #ef9a9a;
+}
+
+.today-summary-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #3b9a5f;
+    color: white;
+
+    font-size: 14px;
 }
 
 .today-summary-card.no-events .today-summary-icon {
     background: #dc4c4c;
 }
 
-.today-summary-card.no-events .count-badge {
-    background: #dc4c4c;
-}
-.today-summary-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background: #3b9a5f;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-}
-
 .today-summary-content {
     flex: 1;
+    min-width: 0;
 }
 
 .today-summary-header {
     display: flex;
     align-items: center;
-    gap: 10px;
     flex-wrap: wrap;
+    gap: 10px;
+
     margin-bottom: 10px;
 }
 
@@ -391,18 +135,28 @@ button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     padding: 3px 10px;
+
     border-radius: 999px;
+
     background: #4ea86d;
     color: white;
+
     font-size: 12px;
     font-weight: 700;
+}
+
+.today-summary-card.no-events .count-badge {
+    background: #dc4c4c;
 }
 
 .today-summary-list {
     display: flex;
     flex-wrap: wrap;
+
     gap: 8px 14px;
+
     color: #25313a;
     font-size: 14px;
 }
@@ -410,296 +164,361 @@ button {
 .today-summary-item {
     display: inline-flex;
     align-items: center;
+    flex-wrap: wrap;
+
     gap: 8px;
 }
 
+
+/* 카테고리 범례 */
+
 .legend-title {
-    font-weight: 700;
     margin-bottom: 12px;
+
+    font-weight: 700;
 }
 
 .legend-items {
     display: flex;
-    gap: 10px;
     flex-wrap: wrap;
+
+    gap: 10px;
 }
 
 .legend-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+
     padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 13px;
+
     border: 1px solid #e2d6ca;
+    border-radius: 999px;
+
     background: white;
+
+    font-size: 13px;
 }
 
 .legend-pill::before {
     content: "";
+
     width: 8px;
     height: 8px;
-    border-radius: 50%;
+
     display: inline-block;
+
+    border-radius: 50%;
 }
 
 
-/* =========================
-   화면 전체 톤 조정
-========================= */
 
-body {
-    background: #f6f1e8;
-}
-
-.calendar {
-    background: #fffdf9;
-    border: 1px solid #decfbd;
-    box-shadow: none;
-}
+/* ==================================================
+   04. 상단 도트 배너 / 달력 컨트롤
+================================================== */
 
 .calendar-header {
-    padding: 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 20px;
 }
 
-.calendar-header h1 {
-    display: none;
+
+/* 도트 예약 페이지 */
+
+.dott-reservation-banner {
+    width: min(600px, 48%);
+    min-height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 0 20px;
+
+    border: 1px solid #d8c9b5;
+    border-radius: 14px;
+
+    background: #fff8ed;
+    color: #5c4630;
+
+    text-decoration: none;
+
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
 }
 
-.calendar-header p {
-    display: none;
+.dott-reservation-banner:hover {
+    background: #f8ead7;
+    transform: translateY(-1px);
 }
 
-.calendar-controls {
-    margin-left: auto;
-}
-
-.calendar-controls h2 {
-    min-width: auto;
-    font-size: 22px;
+.dott-reservation-title {
+    font-size: 15px;
     font-weight: 800;
 }
 
-.weekdays {
-    background: #fffaf3;
-    border-bottom: 1px solid #decfbd;
-}
+.dott-reservation-arrow {
+    flex-shrink: 0;
 
-.weekdays div {
-    font-size: 14px;
-}
+    color: #94785c;
 
-.day {
-    background: #fffdf9;
-    border-right: 1px solid #e2d6ca;
-    border-bottom: 1px solid #e2d6ca;
-    padding: 10px;
-}
-
-.other-month {
-    background: #fcf8f1;
-    color: #b1a593;
-}
-
-.day-number {
-    font-weight: 700;
-}
-
-
-/* =========================
-   일정 카드 디자인
-========================= */
-
-.event {
-    padding: 8px 10px;
-    margin-top: 6px;
-    border-radius: 10px;
-    font-size: 12px;
-    line-height: 1.35;
-    white-space: normal;
-    overflow: hidden;
-    cursor: pointer;
-    border: 1px solid transparent;
-}
-
-.event-time {
-    font-weight: 700;
-    margin-bottom: 2px;
-}
-
-.event-title {
-    font-weight: 600;
-    margin-bottom: 4px;
-    word-break: keep-all;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.event-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
     font-size: 11px;
-    color: rgba(0, 0, 0, 0.65);
+    font-weight: 700;
 }
 
 
-/* =========================
-   카테고리 색상
-========================= */
+/* 달력 조작 */
 
-.category-bogem,
-.legend-bogem::before {
-    background: #efe5bf;
-}
-.category-meomi,
-.legend-meomi::before {
-    background: #efd7ca;
-}
-.category-hyeobchu,
-.legend-hyeobchu::before {
-    background: #dbe7da;
-}
-.category-etc,
-.legend-etc::before {
-    background: #e8e1ec;
-}
+.calendar-controls {
+    display: flex;
+    align-items: center;
 
-.category-bogem {
-    color: #5f4d15;
-}
-.category-meomi {
-    color: #6c4032;
-}
-.category-hyeobchu {
-    color: #31573b;
-}
-.category-etc {
-    color: #594068;
-}
-
-
-/* =========================
-   폼 확장
-========================= */
-
-.form-row.two-cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
+.calendar-controls h2 {
+    min-width: 150px;
 
-/* =========================
-   상세 팝업
-========================= */
+    margin: 0;
 
-.detail-modal-content {
-    width: min(420px, 92%);
-    position: relative;
-    border-radius: 18px;
-}
+    text-align: center;
 
-.close-button {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    border: 1px solid #d8d1c7;
-    background: white;
-    cursor: pointer;
-    font-size: 20px;
-    line-height: 1;
-}
-
-.detail-category-badge {
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    margin-bottom: 12px;
-    background: #f0e8d8;
-}
-
-.detail-title {
-    font-size: 32px;
-    margin: 0 0 18px;
-    line-height: 1.25;
+    font-size: 22px;
     font-weight: 800;
+
+    white-space: nowrap;
 }
 
-.detail-table {
-    border-top: 1px solid #e5ddd2;
+.calendar-controls > button,
+.auth-actions button {
+    min-height: 40px;
+
+    padding: 8px 13px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: white;
+    color: #1f2937;
 }
 
-.detail-row {
+.calendar-controls > button:hover,
+.auth-actions button:hover {
+    background: #f3f4f6;
+}
+
+
+/* 로그인 / 일정 추가 */
+
+.auth-actions {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+#quickAddEventButton {
+    background: #333;
+    border-color: #333;
+
+    color: white;
+
+    font-weight: 700;
+}
+
+#quickAddEventButton:hover {
+    background: #222;
+}
+
+
+
+/* ==================================================
+   05. 카테고리 필터
+================================================== */
+
+.category-filter {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-bottom: 16px;
+}
+
+.filter-button {
+    padding: 8px 14px;
+
+    border: 1px solid #d8d1c7;
+    border-radius: 999px;
+
+    background: white;
+    color: #5f5a52;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.filter-button:hover {
+    background: #f7f2ea;
+}
+
+.filter-button.active {
+    background: #2f3542;
+    border-color: #2f3542;
+
+    color: white;
+}
+
+
+
+/* ==================================================
+   06. 메인 캘린더
+================================================== */
+
+.calendar {
+    width: 100%;
+    max-width: 100%;
+
+    overflow: hidden;
+
+    border: 1px solid #decfbd;
+    border-radius: 14px;
+
+    background: #fffdf9;
+}
+
+
+/* 요일 */
+
+.weekdays {
+    width: 100%;
+
     display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 14px;
-    padding: 12px 0;
-    border-bottom: 1px solid #e5ddd2;
-    font-size: 15px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+
+    border-bottom: 1px solid #decfbd;
+
+    background: #fffaf3;
 }
 
-.detail-label {
-    color: #8a8175;
-    font-weight: 600;
+.weekdays div {
+    padding: 14px 4px;
+
+    text-align: center;
+
+    color: #4b5563;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.weekdays .sunday {
+    color: #dc2626;
+}
+
+.weekdays .saturday {
+    color: #2563eb;
 }
 
 
-/* =========================
-   모바일
-========================= */
+/* 날짜 그리드 */
 
-@media (max-width: 900px) {
-    .dashboard-row {
-        grid-template-columns: 1fr;
-    }
-}
-/* =========================
-   드래그 이동
-========================= */
+.calendar-grid {
+    width: 100%;
 
-.event.dragging {
-    opacity: 0.45;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
-.day.drag-over {
-    background: #eef6ff;
-    outline: 2px dashed #6b9fe6;
-    outline-offset: -3px;
-}
-.event[draggable="true"] {
-    cursor: grab;
+.day {
+    min-width: 0;
+    min-height: 150px;
+
+    padding: 10px;
+
+    overflow: hidden;
+
+    border-right: 1px solid #e2d6ca;
+    border-bottom: 1px solid #e2d6ca;
+
+    background: #ffffff;
 }
 
-.event[draggable="true"]:active {
-    cursor: grabbing;
+.day:nth-child(7n) {
+    border-right: none;
 }
-/* =========================
-   날짜 A / B 상태 표시
-========================= */
+
+
+/* 현재 달 밖 빈칸 */
+
+.day.empty-day {
+    background: #fafafa;
+
+    cursor: default;
+}
+
+
+/* 주말 */
+
+.day.sunday-cell {
+    background: #fff3f3;
+}
+
+.day.saturday-cell {
+    background: #f2f6ff;
+}
+
+
+/* 날짜 상단 */
 
 .day-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 8px;
 
     margin-bottom: 7px;
 }
 
+.day-number {
+    width: 30px;
+    height: 30px;
 
-/* 기존 day-number의 아래 여백 제거 */
-.day-header .day-number {
-    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    font-size: 14px;
+    font-weight: 700;
 }
 
-/* =========================
-   유목민 일정 표시
-========================= */
+
+/* 오늘 날짜 */
+
+.today .day-number {
+    background: #111827;
+    color: white;
+}
+
+
+/* 유목민 일정 표시 */
 
 .nomad-indicator {
     min-width: 22px;
@@ -709,106 +528,281 @@ body {
     align-items: center;
     justify-content: center;
 
+    flex-shrink: 0;
+
     font-size: 17px;
     line-height: 1;
-
-    flex-shrink: 0;
 }
 
-/* =========================
-   카테고리 필터
-========================= */
 
-.category-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-}
 
-.filter-button {
-    border: 1px solid #d8d1c7;
-    background: white;
-    color: #5f5a52;
+/* ==================================================
+   07. 일정 카드
+================================================== */
 
-    padding: 8px 14px;
+.event {
+    width: 100%;
+    min-width: 0;
 
-    border-radius: 999px;
+    margin-top: 6px;
+    padding: 8px 10px;
+
+    overflow: hidden;
+
+    border: 1px solid transparent;
+    border-radius: 10px;
+
+    font-size: 12px;
+    line-height: 1.35;
 
     cursor: pointer;
+}
+
+.event-time {
+    margin-bottom: 2px;
 
     font-weight: 700;
+}
+
+.event-title {
+    margin-bottom: 4px;
+
+    overflow: hidden;
+
+    font-weight: 600;
+
+    word-break: keep-all;
+    text-overflow: ellipsis;
+}
+
+.event-meta {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    color: rgba(0, 0, 0, 0.65);
+
+    font-size: 11px;
+}
+
+
+/* 일정 드래그 */
+
+.event[draggable="true"] {
+    cursor: grab;
+}
+
+.event[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.event.dragging {
+    opacity: 0.45;
+}
+
+.day.drag-over {
+    background: #eef6ff;
+
+    outline: 2px dashed #6b9fe6;
+    outline-offset: -3px;
+}
+
+
+
+/* ==================================================
+   08. 카테고리 색상
+================================================== */
+
+.category-bogem,
+.legend-bogem::before {
+    background: #efe5bf;
+}
+
+.category-meomi,
+.legend-meomi::before {
+    background: #efd7ca;
+}
+
+.category-hyeobchu,
+.legend-hyeobchu::before {
+    background: #dbe7da;
+}
+
+.category-etc,
+.legend-etc::before {
+    background: #e8e1ec;
+}
+
+
+.category-bogem {
+    color: #5f4d15;
+}
+
+.category-meomi {
+    color: #6c4032;
+}
+
+.category-hyeobchu {
+    color: #31573b;
+}
+
+.category-etc {
+    color: #594068;
+}
+
+
+
+/* ==================================================
+   09. 공통 팝업
+================================================== */
+
+.modal {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px;
+
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.modal-content {
+    width: min(440px, 100%);
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    padding: 24px;
+
+    border-radius: 16px;
+
+    background: white;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+}
+
+
+/* 입력폼 */
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+    width: 100%;
+
+    margin-top: 12px;
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: white;
+}
+
+.modal-content textarea {
+    min-height: 100px;
+
+    resize: vertical;
+}
+
+.form-label {
+    display: block;
+
+    margin-top: 14px;
+    margin-bottom: 6px;
+
+    color: #666;
+
     font-size: 13px;
-
-    transition: all 0.15s ease;
+    font-weight: 700;
 }
 
-.filter-button:hover {
-    background: #f7f2ea;
+.form-row.two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
 }
 
-.filter-button.active {
-    background: #2f3542;
-    color: white;
-    border-color: #2f3542;
+
+/* 팝업 버튼 */
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 20px;
 }
-/* =========================
-   로그인 팝업
-========================= */
+
+.modal-buttons button {
+    min-height: 40px;
+
+    padding: 9px 16px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: white;
+}
+
+.primary-button {
+    background: #333 !important;
+    border-color: #333 !important;
+
+    color: white !important;
+}
+
+.danger-button {
+    border-color: #efaaaa !important;
+
+    color: #c93636 !important;
+}
+
+
+
+/* ==================================================
+   10. 로그인 팝업
+================================================== */
 
 .login-modal-content {
     position: relative;
-    width: min(400px, 92%);
+
+    width: min(400px, 100%);
+
     padding: 30px;
 }
 
 .login-title {
     margin: 0 0 8px;
+
     font-size: 26px;
     font-weight: 800;
 }
 
 .login-description {
     margin: 0 0 24px;
+
     color: #777;
+
     font-size: 14px;
 }
-
-.login-label {
-    display: block;
-    margin-top: 16px;
-    margin-bottom: 7px;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    color: #555;
-}
-
-.login-modal-content input {
-    width: 100%;
-
-    padding: 12px 13px;
-
-    border: 1px solid #d8d1c7;
-    border-radius: 10px;
-
-    background: white;
-
-    font: inherit;
-
-    outline: none;
-}
-
-.login-modal-content input:focus {
-    border-color: #8b8174;
-    box-shadow: 0 0 0 3px rgba(139, 129, 116, 0.12);
-}
-
-
-/* =========================
-   비밀번호 입력칸
-========================= */
 
 .password-field {
     position: relative;
@@ -824,49 +818,16 @@ body {
     top: 50%;
     right: 8px;
 
-    transform: translateY(-50%);
+    transform: translateY(-28%);
 
     border: none;
-    background: transparent;
 
+    background: transparent;
     color: #777;
 
     font-size: 12px;
     font-weight: 700;
-
-    cursor: pointer;
 }
-
-
-/* =========================
-   로그인 버튼
-========================= */
-
-.login-submit-button {
-    width: 100%;
-
-    margin-top: 22px;
-    padding: 12px;
-
-    border: none;
-    border-radius: 10px;
-
-    background: #333;
-    color: white;
-
-    font-weight: 700;
-
-    cursor: pointer;
-}
-
-.login-submit-button:hover {
-    background: #222;
-}
-
-
-/* =========================
-   로그인 오류
-========================= */
 
 .login-error {
     min-height: 18px;
@@ -877,193 +838,214 @@ body {
 
     font-size: 13px;
 }
-/* =========================
-   로그인 / 빠른 일정 추가
-========================= */
-.dott-reservation-banner {
+
+.login-submit-button {
     width: 100%;
-    min-width: 0;
-    min-height: 44px;
 
-    padding: 0 14px;
+    margin-top: 18px;
+    padding: 12px;
 
-    font-size: 13px;
-}
-.auth-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
+    border: none;
+    border-radius: 10px;
 
-#quickAddEventButton {
     background: #333;
     color: white;
-    border-color: #333;
+
     font-weight: 700;
 }
 
-#quickAddEventButton:hover {
-    background: #222;
-}
-.event-form-label {
-    display: block;
-    margin-top: 14px;
-    margin-bottom: 6px;
 
-    color: #666;
-    font-size: 13px;
-    font-weight: 700;
-}
 
-#eventDate {
-    width: 100%;
-    padding: 10px 12px;
+/* ==================================================
+   11. 상세보기 팝업
+================================================== */
 
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
+.detail-modal-content {
+    position: relative;
 
-    font: inherit;
-}
-/* =========================
-   주말 배경
-========================= */
-
-/* 일요일 */
-.day.sunday-cell {
-    background: #fff4f4;
+    width: min(440px, 100%);
 }
 
-/* 토요일 */
-.day.saturday-cell {
-    background: #f3f7ff;
+.close-button {
+    position: absolute;
+
+    top: 16px;
+    right: 16px;
+
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d8d1c7;
+    border-radius: 10px;
+
+    background: white;
+
+    font-size: 20px;
+    line-height: 1;
 }
 
-/* 다른 달 날짜는 너무 진해지지 않게 */
-.day.other-month.sunday-cell {
-    background: #fff9f9;
+.detail-category-badge {
+    display: inline-block;
+
+    margin-bottom: 12px;
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    background: #f0e8d8;
+
+    font-size: 12px;
 }
 
-.day.other-month.saturday-cell {
-    background: #f8faff;
-}
-/* =========================
-   대한민국 공휴일
-========================= */
+.detail-title {
+    margin: 0 40px 18px 0;
 
-.holiday-number {
-    color: #d64545;
+    font-size: 30px;
     font-weight: 800;
+    line-height: 1.25;
 }
 
-.holiday-name {
-    margin-top: -3px;
-    margin-bottom: 6px;
-
-    font-size: 11px;
-    font-weight: 700;
-
-    color: #d64545;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.detail-table {
+    border-top: 1px solid #e5ddd2;
 }
 
-.holiday-cell {
-    border-color: #efcaca;
-}
-/* =========================
-   달력 날짜 배경 정리
-========================= */
+.detail-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
 
-.day {
-    background: #ffffff;
-}
+    gap: 14px;
 
-/* 일요일 */
-.day.sunday-cell {
-    background: #fff3f3;
+    padding: 12px 0;
+
+    border-bottom: 1px solid #e5ddd2;
+
+    font-size: 15px;
 }
 
-/* 토요일 */
-.day.saturday-cell {
-    background: #f2f6ff;
+.detail-label {
+    color: #8a8175;
+
+    font-weight: 600;
 }
 
-/* 현재 달 밖의 빈칸 */
-.day.empty-day {
-    background: #fafafa;
-    cursor: default;
+
+
+/* ==================================================
+   12. 태블릿
+================================================== */
+
+@media (max-width: 900px) {
+
+    .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+
 }
-/* =========================
-   모바일 화면 최적화
-========================= */
+
+
+
+/* ==================================================
+   13. 모바일
+================================================== */
 
 @media (max-width: 768px) {
 
-    body {
-        margin: 0;
-        padding: 0;
-    }
+    /* 전체 */
 
     .calendar-app {
         width: 100%;
+
+        margin: 0;
         padding: 10px;
-        box-sizing: border-box;
     }
 
-    /* 상단 요약 카드 */
-    .dashboard-row {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+
+    /* 오늘 일정 */
 
     .today-summary-card,
     .category-legend-card {
         width: 100%;
-        box-sizing: border-box;
     }
 
-    /* 헤더 */
+    .today-summary-header strong {
+        font-size: 18px;
+    }
+
+    .today-summary-list {
+        font-size: 12px;
+    }
+
+
+    /* 상단 */
+
     .calendar-header {
-        display: flex;
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
+
+        gap: 10px;
     }
 
-    .calendar-header h1 {
-        font-size: 24px;
-        margin-bottom: 2px;
+
+    /* 도트 예약 페이지 */
+
+    .dott-reservation-banner {
+        width: 100%;
+        min-width: 0;
+        min-height: 44px;
+
+        padding: 0 14px;
     }
 
-    .calendar-header p {
-        margin-top: 0;
+    .dott-reservation-title {
+        font-size: 13px;
     }
+
+
+    /* 달력 컨트롤 */
 
     .calendar-controls {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns:
+            40px
+            minmax(110px, 1fr)
+            40px
+            56px;
+
         gap: 6px;
     }
 
     .calendar-controls h2 {
-        flex: 1;
-        min-width: 110px;
-        text-align: center;
+        min-width: 0;
+
         font-size: 18px;
+
+        white-space: nowrap;
     }
 
-    .calendar-controls button {
-        min-height: 38px;
+    .calendar-controls > button {
+        min-width: 0;
+
+        padding: 6px;
     }
 
-    /* 로그인 / 일정추가 */
+
+    /* 로그인 / 일정 추가 */
+
     .auth-actions {
+        grid-column: 1 / -1;
+
         width: 100%;
+
+        display: flex;
         flex-direction: row;
+
         gap: 6px;
     }
 
@@ -1071,10 +1053,13 @@ body {
         flex: 1;
     }
 
-    /* 카테고리 필터 */
+
+    /* 필터 */
+
     .category-filter {
-        overflow-x: auto;
         flex-wrap: nowrap;
+
+        overflow-x: auto;
 
         padding-bottom: 4px;
 
@@ -1085,112 +1070,104 @@ body {
         flex-shrink: 0;
     }
 
-    /* 요일 */
-.weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    width: 100%;
-    font-size: 12px;
-}
 
     /* 달력 */
+
     .calendar {
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-}
-    
-.calendar-grid {
-    
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 2px;
-    width: 100%;
-}
-.day {
-    min-width: 0;
-    min-height: 82px;
+        width: 100%;
+        max-width: 100%;
 
-    padding: 4px;
+        overflow: hidden;
+    }
 
-    border-radius: 5px;
+    .weekdays,
+    .calendar-grid {
+        width: 100%;
 
-    box-sizing: border-box;
+        grid-template-columns:
+            repeat(7, minmax(0, 1fr));
+    }
 
-    overflow: hidden;
-}
+    .weekdays div {
+        padding: 10px 2px;
 
-    .day-number {
         font-size: 12px;
+    }
+
+    .day {
+        min-width: 0;
+        min-height: 82px;
+
+        padding: 4px;
+
+        overflow: hidden;
     }
 
     .day-header {
         gap: 3px;
+
         margin-bottom: 4px;
     }
-    
-/* 유목민 표시 */
-  .nomad-indicator {
-    min-width: 16px;
-    height: 16px;
-    font-size: 13px;
-}
+
+    .day-number {
+        width: 20px;
+        height: 20px;
+
+        font-size: 11px;
+    }
+
+
+    /* 유목민 */
+
+    .nomad-indicator {
+        min-width: 16px;
+        height: 16px;
+
+        font-size: 13px;
+    }
+
 
     /* 일정 카드 */
-.event {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
 
-    padding: 4px 5px;
+    .event {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
 
-    box-sizing: border-box;
+        padding: 4px 5px;
 
-    overflow: hidden;
-}
+        overflow: hidden;
+
+        border-radius: 5px;
+    }
 
     .event-time {
         font-size: 9px;
     }
 
-.event-title {
-    font-size: 10px;
+    .event-title {
+        overflow: hidden;
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+        font-size: 10px;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 
     .event-meta {
         display: none;
     }
 
-    .event-ab-badge {
-        width: 16px;
-        height: 16px;
-
-        font-size: 8px;
-    }
 
     /* 팝업 */
-    .modal-content {
-        width: calc(100% - 24px);
+
+    .modal-content,
+    .login-modal-content,
+    .detail-modal-content {
+        width: calc(100vw - 24px);
         max-height: 88vh;
 
-        overflow-y: auto;
-
         padding: 20px;
-
-        box-sizing: border-box;
-    }
-
-    .login-modal-content {
-        width: calc(100% - 24px);
-    }
-
-    /* 일정 입력폼 */
-    .form-row.two-cols {
-        grid-template-columns: 1fr;
     }
 
     .modal-content input,
@@ -1199,10 +1176,12 @@ body {
         font-size: 16px;
     }
 
-    /* 버튼 */
+    .form-row.two-cols {
+        grid-template-columns: 1fr;
+    }
+
     .modal-buttons {
         display: flex;
-        gap: 6px;
     }
 
     .modal-buttons button {
@@ -1210,35 +1189,9 @@ body {
 
         min-height: 42px;
     }
-}
-/* =========================
-   도트 예약 페이지 배너
-========================= */
 
-.dott-reservation-banner {
-    width: min(560px, 48%);
-    min-height: 54px;
+    .detail-title {
+        font-size: 24px;
+    }
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 20px;
-
-    border: 1px solid #d8c9b5;
-    border-radius: 14px;
-
-    background: #fff8ed;
-    color: #5c4630;
-
-    font-size: 15px;
-    font-weight: 800;
-
-    text-decoration: none;
-
-    box-sizing: border-box;
-
-    transition:
-        background 0.15s ease,
-        transform 0.15s ease;
 }
