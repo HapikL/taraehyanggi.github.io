@@ -227,6 +227,28 @@ button {
     margin-bottom: 20px;
 }
 
+/* 정산 페이지 */
+
+.settlement-button {
+    min-height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 13px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #fff8ed;
+    color: #5c4630;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 800;
+}
 
 /* 도트 예약 페이지 */
 
