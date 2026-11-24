@@ -91,6 +91,11 @@ const eventTitle =
 const eventTime =
     document.getElementById('eventTime');
 
+const eventTimePeopleRow =
+    document.getElementById(
+        'eventTimePeopleRow'
+    );
+
 const eventPeople =
     document.getElementById('eventPeople');
 
@@ -731,6 +736,57 @@ function renderTodaySummary() {
    09. 일정 입력창 공통 함수
 ================================================== */
 
+function updateEventFormByCategory() {
+
+    const isPersonal =
+        eventCategory.value === '기타';
+
+
+    if (isPersonal) {
+
+        eventPeople.style.display =
+            'none';
+
+        eventHost.style.display =
+            'none';
+
+        eventDescription.style.display =
+            'none';
+
+        eventNomad.style.display =
+            'none';
+
+
+        eventTimePeopleRow.style
+            .gridTemplateColumns =
+                '1fr';
+
+    } else {
+
+        eventPeople.style.display =
+            '';
+
+        eventHost.style.display =
+            '';
+
+        eventDescription.style.display =
+            '';
+
+        eventNomad.style.display =
+            '';
+
+
+        eventTimePeopleRow.style
+            .gridTemplateColumns =
+                '';
+    }
+}
+
+eventCategory.addEventListener(
+    'change',
+    updateEventFormByCategory
+);
+
 /* 새 일정 */
 
 function openCreateEventModal(
@@ -764,6 +820,7 @@ function openCreateEventModal(
 eventNomad.value =
     'X';
 
+   updateEventFormByCategory();
 
     deleteEventButton.style.display =
         'none';
@@ -821,6 +878,7 @@ function openEditEventModal(event) {
         ? event.ab_type
         : 'X';
 
+   updateEventFormByCategory();
 
     deleteEventButton.style.display =
         'inline-block';
@@ -1251,21 +1309,27 @@ function renderCalendar() {
                     )}
                 </div>
 
-                <div class="event-meta">
+   ${
+    event.category !== '기타'
+        ? `
+            <div class="event-meta">
 
-                    <span>
-                        ${event.people_count ?? '-'}명
-                    </span>
+                <span>
+                    ${event.people_count ?? '-'}명
+                </span>
 
-                    <span>
-                        벙주
-                        ${escapeHTML(
-                            event.host_name ||
-                            '-'
-                        )}
-                    </span>
+                <span>
+                    벙주
+                    ${escapeHTML(
+                        event.host_name ||
+                        '-'
+                    )}
+                </span>
 
-                </div>
+            </div>
+        `
+        : ''
+}
             `;
 
 
@@ -1607,15 +1671,20 @@ saveEventButton.addEventListener(
 
             return;
         }
-
+       
+const isPersonalEvent =
+    eventCategory.value === '기타';
+       
         const eventData = {
 
             title,
 
             description:
-                eventDescription
-                    .value
-                    .trim(),
+    isPersonalEvent
+        ? ''
+        : eventDescription
+            .value
+            .trim(),
 
             start_date:
                 selectedDate,
@@ -1629,24 +1698,34 @@ saveEventButton.addEventListener(
                     .trim(),
 
             people_count:
-                eventPeople.value
-                    ? parseInt(
-                        eventPeople.value,
-                        10
-                    )
-                    : null,
+    isPersonalEvent
+        ? null
+        : (
+            eventPeople.value
+                ? parseInt(
+                    eventPeople.value,
+                    10
+                )
+                : null
+        ),
 
             host_name:
-                eventHost
-                    .value
-                    .trim(),
+    isPersonalEvent
+        ? ''
+        : eventHost
+            .value
+            .trim(),
 
             /*
                DB의 기존 ab_type 컬럼을
                유목민 O/X 값 저장용으로 재사용
             */
      ab_type:
-    eventNomad.value || 'X',
+    isPersonalEvent
+        ? 'X'
+        : (
+            eventNomad.value || 'X'
+        ),
         };
 
 
