@@ -973,7 +973,12 @@ function renderMonthlySettlement() {
                         item.event_id ===
                         event.id
                 );
-
+const selectedTags =
+    Array.isArray(
+        payment?.exclude_tags
+    )
+        ? payment.exclude_tags
+        : [];
 
             const received =
                 payment?.received ===
@@ -1055,18 +1060,46 @@ function renderMonthlySettlement() {
                 </div>
 
 
-                <div
-                    class="table-title"
-                    title="${escapeHTML(
-                        event.title || ''
-                    )}"
-                >
+            <div
+    class="table-title"
+    title="${escapeHTML(
+        event.title || ''
+    )}"
+>
 
-                    ${escapeHTML(
-                        event.title || ''
-                    )}
+    <span class="table-title-text">
 
-                </div>
+        ${escapeHTML(
+            event.title || ''
+        )}
+
+    </span>
+
+
+    ${
+        selectedTags.length > 0
+            ? `
+                <span class="table-exclude-tags">
+
+                    ${selectedTags
+                        .map(
+                            tag => `
+                                <span class="
+                                    table-exclude-tag
+                                ">
+                                    ${escapeHTML(tag)}
+                                </span>
+                            `
+                        )
+                        .join('')
+                    }
+
+                </span>
+            `
+            : ''
+    }
+
+</div>
 
 
                 <div>
