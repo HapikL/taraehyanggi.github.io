@@ -976,7 +976,7 @@ grid-template-columns:
 }
 
 
-/* 머미 추가 비용 */
+/* 머미 1인당 비용 */
 
 .meomi-cost-control {
     display: flex;
@@ -985,6 +985,23 @@ grid-template-columns:
     gap: 5px;
 
     margin-top: 5px;
+}
+
+/* 머미 비용 계산 결과 */
+
+.meomi-cost-result {
+    margin-top: 4px;
+
+    color: #8b6d5c;
+
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.meomi-cost-result strong {
+    color: #6f4430;
+
+    font-weight: 900;
 }
 
 .meomi-cost-control span {
