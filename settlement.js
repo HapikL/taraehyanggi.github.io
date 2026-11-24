@@ -512,6 +512,9 @@ headerLogoutButton.addEventListener(
 
    토 / 일:
    1명당 12,000원
+
+   머미:
+   기본 이용료 + 별도 머미 비용
 */
 
 function getEventPrice(
@@ -563,6 +566,26 @@ function getEventPrice(
         );
 
 
+    const baseTotal =
+        chargedPeople *
+        pricePerPerson;
+
+
+    /*
+       머미 일정만 추가 비용 적용
+    */
+
+    const meomiCost =
+        event.category === '머미'
+            ? Math.max(
+                0,
+                Number(
+                    payment?.meomi_cost
+                ) || 0
+            )
+            : 0;
+
+
     return {
 
         people,
@@ -573,9 +596,13 @@ function getEventPrice(
 
         pricePerPerson,
 
+        baseTotal,
+
+        meomiCost,
+
         total:
-            chargedPeople *
-            pricePerPerson
+            baseTotal +
+            meomiCost
     };
 }
 /* ==================================================
@@ -1413,6 +1440,12 @@ const price =
         event,
         payment
     );
+           const selectedTags =
+    Array.isArray(
+        payment?.exclude_tags
+    )
+        ? payment.exclude_tags
+        : [];
 
 
             const received =
@@ -1432,111 +1465,270 @@ const price =
 
             row.innerHTML = `
 
-                <div>
+    <div>
 
-                    <div class="daily-event-title">
+        <div class="daily-event-title">
 
-                        ${escapeHTML(
-                            event.category ||
-                            '기타'
-                        )}
-                        ·
-                        ${escapeHTML(
-                            event.title ||
-                            ''
-                        )}
+            ${escapeHTML(
+                event.category ||
+                '기타'
+            )}
+            ·
+            ${escapeHTML(
+                event.title ||
+                ''
+            )}
 
-                    </div>
-
-
-                    <div class="daily-event-meta">
-
-                        ${escapeHTML(
-                            event.event_time ||
-                            '--:--'
-                        )}
-
-                        ·
-
-                        벙주
-                        ${escapeHTML(
-                            event.host_name ||
-                            '-'
-                        )}
-
-                    </div>
-
-                </div>
+        </div>
 
 
-               <div>
+        <div class="daily-event-meta">
 
-    총 ${price.people}명
+            ${escapeHTML(
+                event.event_time ||
+                '--:--'
+            )}
 
-    <div class="daily-event-meta">
-        실제 정산 ${price.chargedPeople}명
+            ·
+
+            벙주
+            ${escapeHTML(
+                event.host_name ||
+                '-'
+            )}
+
+        </div>
+
     </div>
 
-</div>
+
+    <!-- 제외 태그 -->
+
+    <div class="exclude-tags">
+
+        <button
+            class="
+                exclude-tag-button
+                ${
+                    selectedTags.includes(
+                        '박지훈 제외'
+                    )
+                        ? 'active'
+                        : ''
+                }
+            "
+            data-tag="박지훈 제외"
+            type="button"
+        >
+            박지훈 제외
+        </button>
 
 
-<div class="exclude-people-control">
+        <button
+            class="
+                exclude-tag-button
+                ${
+                    selectedTags.includes(
+                        'GM 제외'
+                    )
+                        ? 'active'
+                        : ''
+                }
+            "
+            data-tag="GM 제외"
+            type="button"
+        >
+            GM 제외
+        </button>
 
-    <span class="exclude-label">
-        제외
-    </span>
+    </div>
+
+
+    <!-- 인원 -->
+
+    <div>
+
+        총 ${price.people}명
+
+        <div class="daily-event-meta">
+            실제 정산 ${price.chargedPeople}명
+        </div>
+
+    </div>
+
+
+    <!-- 제외 인원 -->
+
+    <div class="exclude-people-control">
+
+        <span class="exclude-label">
+            제외
+        </span>
+
+        <button
+            class="exclude-minus"
+            type="button"
+        >
+            −
+        </button>
+
+        <span class="exclude-count">
+            ${price.excludedPeople}
+        </span>
+
+        <button
+            class="exclude-plus"
+            type="button"
+        >
+            +
+        </button>
+
+    </div>
+
+
+    <!-- 금액 -->
+
+    <div class="daily-price-area">
+
+        <div class="daily-event-amount">
+
+            ${formatMoney(
+                price.total
+            )}
+
+        </div>
+
+
+        ${
+            event.category === '머미'
+                ? `
+                    <div class="meomi-cost-control">
+
+                        <span>
+                            머미 비용
+                        </span>
+
+                        <input
+                            class="meomi-cost-input"
+                            type="number"
+                            min="0"
+                            step="1000"
+                            value="${price.meomiCost}"
+                        >
+
+                    </div>
+                `
+                : ''
+        }
+
+    </div>
+
+
+    <!-- 수납 -->
 
     <button
-        class="exclude-minus"
+        class="
+            payment-status-button
+            ${
+                received
+                    ? 'received'
+                    : 'unpaid'
+            }
+        "
         type="button"
     >
-        −
+
+        ${
+            received
+                ? '✓ 받음'
+                : '아직 못받음'
+        }
+
     </button>
+`;
+/* 제외 사유 태그 */
 
-    <span class="exclude-count">
-        ${price.excludedPeople}
-    </span>
-
-    <button
-        class="exclude-plus"
-        type="button"
-    >
-        +
-    </button>
-
-</div>
+const tagButtons =
+    row.querySelectorAll(
+        '.exclude-tag-button'
+    );
 
 
-<div class="daily-event-amount">
+tagButtons.forEach(
+    tagButton => {
 
-    ${formatMoney(
-        price.total
-    )}
+        tagButton.addEventListener(
+            'click',
+            async () => {
 
-</div>
+                const tag =
+                    tagButton.dataset.tag;
 
 
-                <button
-                    class="
-                        payment-status-button
-                        ${
-                            received
-                                ? 'received'
-                                : 'unpaid'
-                        }
-                    "
-                    type="button"
-                >
+                let newTags =
+                    [...selectedTags];
 
-                    ${
-                        received
-                            ? '✓ 받음'
-                            : '아직 못받음'
-                    }
 
-                </button>
-            `;
+                if (
+                    newTags.includes(
+                        tag
+                    )
+                ) {
 
+                    newTags =
+                        newTags.filter(
+                            item =>
+                                item !== tag
+                        );
+
+                } else {
+
+                    newTags.push(
+                        tag
+                    );
+                }
+
+
+                await setExcludeTags(
+                    event.id,
+                    newTags
+                );
+            }
+        );
+    }
+);
+
+/* 머미 추가 비용 */
+
+const meomiCostInput =
+    row.querySelector(
+        '.meomi-cost-input'
+    );
+
+
+if (meomiCostInput) {
+
+    meomiCostInput.addEventListener(
+        'change',
+        async () => {
+
+            const value =
+                Math.max(
+                    0,
+                    Number(
+                        meomiCostInput.value
+                    ) || 0
+                );
+
+
+            await setMeomiCost(
+                event.id,
+                value
+            );
+        }
+    );
+}
+           
 const minusButton =
     row.querySelector(
         '.exclude-minus'
@@ -1923,25 +2115,79 @@ function renderDailySettlement() {
 }
 
 /* ==================================================
-   27-1. 이용료 제외 인원 저장
+   27-1. 일정 정산 설정 찾기
 ================================================== */
 
-async function setExcludedPeople(
-    eventId,
-    excludedPeople
+function findPayment(
+    eventId
 ) {
 
-    const existingPayment =
+    return (
         dailyPayments.find(
             item =>
                 item.event_id ===
                 eventId
+        )
+        ||
+        monthlyPayments.find(
+            item =>
+                item.event_id ===
+                eventId
+        )
+        ||
+        null
+    );
+}
+
+
+
+/* ==================================================
+   27-2. 일정 정산 설정 공통 저장
+================================================== */
+
+async function savePaymentSettings(
+    eventId,
+    changes = {}
+) {
+
+    const existing =
+        findPayment(
+            eventId
         );
 
 
-    const received =
-        existingPayment?.received ===
-        true;
+    const payload = {
+
+        event_id:
+            eventId,
+
+        received:
+            existing?.received ===
+            true,
+
+        excluded_people:
+            Number(
+                existing?.excluded_people
+            ) || 0,
+
+        exclude_tags:
+            Array.isArray(
+                existing?.exclude_tags
+            )
+                ? existing.exclude_tags
+                : [],
+
+        meomi_cost:
+            Number(
+                existing?.meomi_cost
+            ) || 0,
+
+        updated_at:
+            new Date()
+                .toISOString(),
+
+        ...changes
+    };
 
 
     const {
@@ -1951,32 +2197,20 @@ async function setExcludedPeople(
             .from(
                 'event_payments'
             )
-            .upsert({
-
-                event_id:
-                    eventId,
-
-                received:
-                    received,
-
-                excluded_people:
-                    excludedPeople,
-
-                updated_at:
-                    new Date()
-                        .toISOString()
-            });
+            .upsert(
+                payload
+            );
 
 
     if (error) {
 
         console.error(
-            '제외 인원 저장 실패:',
+            '정산 설정 저장 실패:',
             error
         );
 
         alert(
-            '제외 인원 저장에 실패했습니다.'
+            '정산 설정 저장에 실패했습니다.'
         );
 
         return;
@@ -1987,6 +2221,68 @@ async function setExcludedPeople(
 
     await loadDailySettlement();
 }
+
+
+
+/* ==================================================
+   27-3. 제외 인원 저장
+================================================== */
+
+async function setExcludedPeople(
+    eventId,
+    excludedPeople
+) {
+
+    await savePaymentSettings(
+        eventId,
+        {
+            excluded_people:
+                excludedPeople
+        }
+    );
+}
+
+
+
+/* ==================================================
+   27-4. 제외 태그 저장
+================================================== */
+
+async function setExcludeTags(
+    eventId,
+    tags
+) {
+
+    await savePaymentSettings(
+        eventId,
+        {
+            exclude_tags:
+                tags
+        }
+    );
+}
+
+
+
+/* ==================================================
+   27-5. 머미 비용 저장
+================================================== */
+
+async function setMeomiCost(
+    eventId,
+    amount
+) {
+
+    await savePaymentSettings(
+        eventId,
+        {
+            meomi_cost:
+                amount
+        }
+    );
+}
+
+
 
 /* ==================================================
    28. 수납 상태 저장
@@ -1997,65 +2293,14 @@ async function setPaymentStatus(
     received
 ) {
 
-    const {
-        error
-    } =
-        await supabaseClient
-            .from(
-                'event_payments'
-            )
-           .upsert({
-
-    event_id:
+    await savePaymentSettings(
         eventId,
-
-    received,
-
-    excluded_people:
-        (
-            dailyPayments.find(
-                item =>
-                    item.event_id ===
-                    eventId
-            )?.excluded_people
-            ??
-            monthlyPayments.find(
-                item =>
-                    item.event_id ===
-                    eventId
-            )?.excluded_people
-            ??
-            0
-        ),
-
-    updated_at:
-        new Date()
-            .toISOString()
-});
-
-
-    if (error) {
-
-        console.error(
-            '수납 상태 저장 실패:',
-            error
-        );
-
-        alert(
-            '수납 상태 저장에 실패했습니다.'
-        );
-
-        return;
-    }
-
-
-    await loadMonthlySettlement();
-
-    await loadDailySettlement();
+        {
+            received:
+                received
+        }
+    );
 }
-
-
-
 /* ==================================================
    29. 하루 날짜 이동
 ================================================== */
