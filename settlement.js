@@ -843,7 +843,94 @@ function getFilteredMonthlyEvents() {
     );
 }
 
+/* ==================================================
+   17-1. 날짜별 하루 총 정산금액 계산
+================================================== */
 
+function getDailyGrandTotal(
+    dateString
+) {
+
+    /* 해당 날짜의 모든 일정 */
+
+    const dayEvents =
+        monthlyEvents.filter(
+            event =>
+                event.start_date ===
+                dateString
+        );
+
+
+    /* 해당 날짜 일정 이용료 + 머미 비용 */
+
+    const eventTotal =
+        dayEvents.reduce(
+            (
+                total,
+                event
+            ) => {
+
+                const payment =
+                    monthlyPayments.find(
+                        item =>
+                            item.event_id ===
+                            event.id
+                    );
+
+
+                const price =
+                    getEventPrice(
+                        event,
+                        payment
+                    );
+
+
+                return (
+                    total +
+                    price.total
+                );
+            },
+            0
+        );
+
+
+    /* 해당 날짜 주차비 */
+
+    const parkingTotal =
+        monthlyParkingRecords
+            .filter(
+                record =>
+                    record.parking_date ===
+                    dateString
+            )
+            .reduce(
+                (
+                    total,
+                    record
+                ) => {
+
+                    return (
+                        total +
+                        (
+                            Number(
+                                record.parking_hours
+                            ) || 0
+                        )
+                        *
+                        100
+                    );
+                },
+                0
+            );
+
+
+    /* 하루 총액 */
+
+    return (
+        eventTotal +
+        parkingTotal
+    );
+}
 
 /* ==================================================
    18. 월별 리스트 표시
@@ -897,6 +984,11 @@ function renderMonthlySettlement() {
     getEventPrice(
         event,
         payment
+    );
+
+           const dailyGrandTotal =
+    getDailyGrandTotal(
+        event.start_date
     );
 
 
@@ -984,13 +1076,16 @@ function renderMonthlySettlement() {
                 </div>
 
 
-                <div class="table-money">
+               <div
+    class="table-money"
+    title="공방 이용료 + 머미 비용 + 주차비"
+>
 
-                    ${formatMoney(
-                        price.total
-                    )}
+    ${formatMoney(
+        dailyGrandTotal
+    )}
 
-                </div>
+</div>
 
 
                 <div>
