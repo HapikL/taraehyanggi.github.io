@@ -1094,33 +1094,29 @@ function renderMonthlySettlement() {
 
 function renderMonthSummary() {
 
-    let eventAmount =
-        0;
-
-    let receivedAmount =
-        0;
+    let eventAmount = 0;
+    let receivedAmount = 0;
 
 
     monthlyEvents.forEach(
         event => {
 
-  const payment =
-    monthlyPayments.find(
-        item =>
-            item.event_id ===
-            event.id
-    );
+            const payment =
+                monthlyPayments.find(
+                    item =>
+                        item.event_id ===
+                        event.id
+                );
 
 
-const amount =
-    getEventPrice(
-        event,
-        payment
-    ).total;
+            const amount =
+                getEventPrice(
+                    event,
+                    payment
+                ).total;
 
 
-            eventAmount +=
-                amount;
+            eventAmount += amount;
 
 
             if (
@@ -1177,8 +1173,6 @@ const amount =
             parkingAmount
         );
 }
-
-
 
 /* ==================================================
    20. 월별 필터 버튼
@@ -1857,35 +1851,30 @@ editButton.addEventListener(
 
 function renderDailyTotals() {
 
-    let eventAmount =
-        0;
-
-    let receivedAmount =
-        0;
+    let eventAmount = 0;
+    let receivedAmount = 0;
 
 
     dailyEvents.forEach(
         event => {
 
-const payment =
-    dailyPayments.find(
-        item =>
-            item.event_id ===
-            event.id
-    );
+            const payment =
+                dailyPayments.find(
+                    item =>
+                        item.event_id ===
+                        event.id
+                );
 
 
-const amount =
-    getEventPrice(
-        event,
-        payment
-    ).total;
+            const amount =
+                getEventPrice(
+                    event,
+                    payment
+                ).total;
 
 
             eventAmount +=
                 amount;
-
-                );
 
 
             if (
@@ -1952,9 +1941,6 @@ const amount =
             parkingAmount
         );
 }
-
-
-
 /* ==================================================
    27. 하루 상세 전체 렌더링
 ================================================== */
