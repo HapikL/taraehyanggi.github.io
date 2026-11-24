@@ -40,11 +40,6 @@ const todayButton =
 
 /* 로그인 */
 
-const settlementButton =
-    document.getElementById(
-        'settlementButton'
-    );
-
 const loginButton =
     document.getElementById('loginButton');
 
@@ -53,6 +48,9 @@ const logoutButton =
 
 const quickAddEventButton =
     document.getElementById('quickAddEventButton');
+
+const settlementButton =
+    document.getElementById('settlementButton');
 
 const loginModal =
     document.getElementById('loginModal');
@@ -323,6 +321,8 @@ async function checkLogin() {
 
         quickAddEventButton.style.display =
             'none';
+       settlementButton.style.display =
+    'none';
 
         return;
     }
@@ -367,6 +367,10 @@ async function checkLogin() {
         isAdmin
             ? 'inline-block'
             : 'none';
+   settlementButton.style.display =
+    isAdmin
+        ? 'flex'
+        : 'none';
 }
 
 
