@@ -547,11 +547,22 @@ function getEventPrice(
         weekday === 6;
 
 
-    const pricePerPerson =
-        weekend
-            ? 12000
-            : 10000;
+const isNomad =
+    event.ab_type === 'O';
 
+
+const pricePerPerson =
+    isNomad
+        ? (
+            weekend
+                ? 10000
+                : 8000
+        )
+        : (
+            weekend
+                ? 12000
+                : 10000
+        );
 
     const people =
         Number(
